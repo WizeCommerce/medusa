@@ -1,0 +1,11 @@
+work
+.idea
+.project
+*.swp
+*.pyc
+*.log
+status.log
+*.html
+doc/html
+#virtualenv default listed below
+mypython/
