@@ -11,18 +11,37 @@ import sys
 
 
 class Thrift():
-    def __init__(self):
+    ##TODO: add caching for:
+    #     - object dependencies.
+    #     - object type.
+    #     - object name.
+    def __init__(self, compiler):
+        self.compiler=compiler
+        self.version_pattern = re.compile("const\s+string\s+VERSION\s*=\s*['\"]+(.*)['\"]+")
+        self.java_namespace_pattern = re.compile("namespace\s+java\s+(.*)")
+        self.ruby_namespace_pattern = re.compile("namespace\s+rb\s+(.*)")
+        self.data_type_pattern = re.compile("\s+(\d+):\s+([required,optional]+)\s+([bool,byte,i16,i32,i64,string,double,string]+)\s+(\w+)")
+        self.object_patterns = {}
+        self.object_patterns['enum'] = re.compile("^enum\s+(\w+).*")
+        self.object_patterns['service'] = re.compile("^service\s+(\w+).*")
+        self.object_patterns['struct'] = re.compile("^struct\s+(\w+).*")
+        self.object_patterns['exception'] =  re.compile("^exception\s+(\w+).*")
+
         self.config = Config()
         self.log = Log(log_file="status.log", logger_name="status").log
         # defines the language compiler to spawn.
-        self.build = {"ruby": self.__thrift_ruby_build__, "java": self.__thrift_java_build__}
+        self.build = {"ruby": self.__thrift_ruby_build__, "java": self.__thrift_java_build__,
+                      "js": self.__thrift_js_build__}
 
-    def __setup_maven__(self):
+    def __setup_maven__(self, sandbox="default"):
         """
             removes the old maven structure, and recreates it
         """
-        os.system("rm -fr %s" % (os.path.join(self.config.work_dir, "src")))
-        os.system("rm -f %s" % os.path.join(self.config.work_dir, "pom.xml"))
+        if sandbox == "default":
+            sanbox = self.config.work_dir
+
+        os.system("rm -fr %s" % (os.path.join(sandbox, "src")))
+        os.system("rm -f %s" % os.path.join(sandbox, "pom.xml"))
         wize_mkdir(self.config.maven_dir)
         wize_mkdir(self.config.get_thrift_option("thrift"))
 
@@ -37,33 +56,82 @@ class Thrift():
             sys.exit(1)
 
 
-    def __thrift_java_build__(self, thrift_file):
+    def __thrift_java_build__(self, thrift_file, sandbox="default"):
         """
         compile the thrift file passed in to java format.
         :param thrift_file:
         """
+        if sandbox == "default":
+            sandbox = self.config.work_dir
         thrift_file = self.get_thrift_full_path(thrift_file)
-        os.system("rm -fr %s" % self.config.java_sandbox)
-        os.chdir(self.config.work_dir)
+        os.system("rm -fr %s" % os.path.join(sandbox, self.config.java_sandbox))
+        os.chdir(sandbox)
         self.log("Building java class for %s" % thrift_file)
-        cmd = "thrift -I {business_objects} -I {services} --gen java:private-members  {file}".format(
-            business_objects=self.config.get_path(type="business_object"), services=self.config.get_path(type="service_object"),
+        cmd = "{thrift_binary} -I {business_objects} -I {services} --gen java:private-members  {file}".format(
+            business_objects=self.config.get_path(type="business_object"), services=self.config.get_path(type="service_object"), thrift_binary=self.compiler.bin,
             file=thrift_file)
         exit_code = subprocess.call(shlex.split(cmd))
         if not exit_code == 0:
             self.log("failed to compile thrift file {file}".format(file=thrift_file))
             sys.exit(1)
 
-    def __thrift_ruby_build__(self, thrift_file):
+    def __thrift_js_build__(self, thrift_file, sandbox="default"):
+        if sandbox == "default":
+            sandbox = self.config.work_dir
+
+        thrift_file = self.get_thrift_full_path(thrift_file)
+        os.system("rm -fr %s" % os.path.join(sandbox, self.config.js_sandbox))
+        os.chdir(sandbox)
+        self.log("Building js class for %s" % thrift_file)
+        cmd = "{thrift_binary} -I {business_objects} -I {services} --gen js  {file}".format(
+            business_objects=self.config.get_path(type="business_object"), services=self.config.get_path(type="service_object"), thrift_binary=self.compiler.bin,
+            file=thrift_file)
+        exit_code = subprocess.call(shlex.split(cmd))
+        if not exit_code == 0:
+            self.log("failed to compile thrift file {file}".format(file=thrift_file))
+            sys.exit(1)
+
+    def object_name(self, thrift_file):
+        """
+        This method will parse the thrift file and try to find the name of the
+        struct/enum/exception being defined.
+        """
+        thrift_file = self.get_thrift_full_path(thrift_file)
+        fp = open(thrift_file, 'r')
+        raw = fp.readlines()
+        fp.close()
+        for line in raw:
+            type = None
+            if line.startswith("enum"):
+                type = "enum"
+            elif line.startwith("exception"):
+                type = "exception"
+            elif line.startwith("struct"):
+                type = "struct"
+            elif line.startwith("service"):
+                type = "service"
+
+            if type is not None:
+                pattern = self.object_patterns['type']
+                match = pattern.match(raw)
+                if len(match.groups()) >= 1:
+                    return match.group(1)
+
+
+    def __thrift_ruby_build__(self, thrift_file, sandbox="default"):
         """
         compile the thrift file passed in to ruby format.
         :param thrift_file:
         """
+        if sandbox == "default":
+            sandbox = self.config.work_dir
+
         thrift_file = self.get_thrift_full_path(thrift_file)
         os.system("rm -fr %s" % (self.config.get_ruby_option("sandbox", True)))
         os.system("rm -fr %s" % (os.path.join(self.config.work_dir, "ruby")))
-        cmd = "thrift -I %s -I %s --gen rb %s" % (
-        self.config.get_path(type="business_object"), self.config.get_path(type="service_object"), thrift_file)
+        cmd = "{thrift_binary} -I {business_objects} -I {services} --gen rb  {file}".format(
+            business_objects=self.config.get_path(type="business_object"), services=self.config.get_path(type="service_object"), thrift_binary=self.compiler.bin,
+            file=thrift_file)
         exit_code = subprocess.call(shlex.split(cmd))
         if exit_code != 0:
             self.log("failed to compile thrift file %s" % thrift_file)
@@ -84,13 +152,15 @@ class Thrift():
             return False
 
 
-    def thrift_build(self, thrift_file, language="java"):
+    def thrift_build(self, thrift_file, language="java", sandbox="default"):
         """
             compiles a single thrift file and copies content to
             maven structure for consumption.
         """
+        if sandbox == "default":
+            sandbox = self.config.work_dir
         if self.build.has_key(language):
-            self.build.get(language)(thrift_file)
+            self.build.get(language)(thrift_file, sandbox)
 
     def get_thrift_full_path(self, thrift_file):
         if thrift_file is None:
@@ -113,6 +183,32 @@ class Thrift():
             dependencies = dependencies.union(set(self.read_thrift_dependencies_recursively(item)))
 
         return dependencies
+
+    def check_constraints(self, line, thrift_file, diff):
+        if self.config.get_thrift_constraint("constraints_enabled"):
+            if self.config.get_thrift_constraint("enforce_empty"):
+                match = re.search("bool.*empty", line)
+                if match is not None and line.find("required") == -1:
+                    print "Error: bool empty field must be a required field. Missing in file {file}".format(file=thrift_file)
+                    sys.exit(1)
+            if self.config.get_thrift_constraint("visibility_check"):
+                if line.find("bool") >= 0 or line.find("i64") >= 0 or line.find("i32") >= 0 or \
+                    line.find("byte") >= 0 or line.find("double") >= 0 or line.find("string") >= 0:
+                        if line.find("optional") == -1 and line.find("required") == -1 and line.find("VERSION") == -1:
+                            print "Error, package visibility flag omitted for line: {line} in file: {file}.".format(line=line.replace("\n",""), file=thrift_file)
+                            sys.exit(1)
+            ## Needs git support.
+            if self.config.get_thrift_constraint("check_field_ordering"):
+                pass
+            if self.config.get_thrift_constraint("check_version_increment"):
+                if diff is not None and diff != "" and diff.find("VERSION") == -1:
+                    print "Error, You forgot to increment the version for {file}".format(file=thrift_file)
+                    sys.exit(1)
+
+
+                pass
+        else:
+            pass
 
 
     def read_thrift_dependencies(self, thrift_file):
@@ -191,7 +287,7 @@ class Thrift():
         """
             Given a text line it will try to extract the value from a thrift constant matching the pattern passed in.
         """
-        match = re.search(".*%s.*=" % pattern, raw)
+        match = re.search(".*{search_pattern}.*=".format(search_pattern=pattern), raw)
         if match is None:
             return default
         start = match.start() + len(match.group(0))
@@ -267,6 +363,12 @@ class ThriftCompiler(object):
         self.meta_data['bin'] = value
 
 
+    def language_options(self, language="java"):
+        try:
+            return self.meta_data.get("language_options").get(language)
+        except:
+            return None
+
     @property
     def options(self):
         return self.meta_data.get("options")
@@ -284,8 +386,34 @@ class ThriftCompiler(object):
         self.meta_data['supported_languages'] = value
 
     def is_language_supported(self, value):
+        if self.languages is None:
+            return False
+
         for lang in self.languages:
             if lang == value:
                 return True
         return False
+
+    @property
+    def postfix(self):
+        try:
+            return self.meta_data.get("compiler_postfix")
+        except:
+            return ""
+
+    @postfix.setter
+    def postfix(self, value):
+        self.meta_data["compiler_postfix"] = value
+
+
+    @property
+    def version(self):
+        try:
+            return self.meta_data.get("version")
+        except:
+            return "0.6.1"  ##our default version
+
+    @version.setter
+    def version(self, value):
+        self.meta_data["version"] = value
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from lib.clients.js_client import JSClient
+
 __author__ = 'sfaci'
 
 import os
@@ -66,12 +68,15 @@ class PublishClient():
         """
         self.client_list = []
         for item in compilers:
-            if self.config.is_java:
+            if self.config.is_java and item.is_language_supported("java"):
                 self.client_list.append(JavaClient(thrift_objects, item))
-            if self.config.is_ruby:
+            if self.config.is_ruby and item.is_language_supported("ruby"):
                 self.client_list.append(RubyClient(thrift_objects, item))
-            if self.config.is_doc_enabled:
+            if self.config.is_js and item.is_language_supported("js"):
+                self.client_list.append(JSClient(thrift_objects, item))
+            if self.config.is_doc_enabled and item.is_language_supported("doc"):
                self.client_list.append(Documentation(thrift_objects, item))
+
 
     def process_thrift_services(self):
         """
@@ -141,8 +146,7 @@ def update_compiler_list(setCompilerList):
 
         display_compilers()
 
-
-def main():
+def process_cli_arguments():
     parser = argparse.ArgumentParser(description='Client Generation Script')
     parser.add_argument('--local', action="store_true", dest="local", default=False, help="Enables Local Mode")
     parser.add_argument("--docOnly", action="store_true", dest="doc_only", default=False)
@@ -167,6 +171,10 @@ def main():
 
     config.set_local(args.local)
     config.set_service_override(args.service)
+
+    if args.service is not None:
+        config.set_local(True)
+
 
     if args.compilers:
         display_compilers()
@@ -196,7 +204,12 @@ def main():
         config.set_languages({})
         config.is_doc_enabled = True
 
+    return publish_client
 
+
+def main():
+
+    publish_client = process_cli_arguments()
     # Create Repo Structure
     publish_client.create_structure()
     # # Loop through all of our services check for updates

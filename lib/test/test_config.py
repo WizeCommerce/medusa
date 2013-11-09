@@ -33,6 +33,14 @@ class ConfigTests(unittest.TestCase):
         config.is_ruby = False
         self.failUnlessEqual(False, config.is_ruby)
 
+    def test_is_js(self):
+        config = Config()
+        config.is_js = True
+        self.failUnlessEqual(True, config.is_js)
+        config.is_js = False
+        self.failUnlessEqual(False, config.is_js)
+
+
     def test_maven_dir(self):
         config = Config()
         expected = "src/main/java"

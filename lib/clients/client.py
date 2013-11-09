@@ -23,8 +23,9 @@ class Client():
     def __init__(self, services, thriftCompiler):
         self.compiler = thriftCompiler
         self.config = Config()
+        self.sandbox_work = self.config.work_dir
         self.status = Status()
-        self.thrift_helper = Thrift()
+        self.thrift_helper = Thrift(self.compiler)
         self.log = Log(log_file="status.log", logger_name="status").log
         self.services = services
 
@@ -111,7 +112,7 @@ class Client():
         #Always get a full path in case input is a relative path from a script
         full_path = os.path.abspath(service)
 
-        os.chdir(self.config.work_dir)
+        os.chdir(self.sandbox_work)
 
         dependencies = self.thrift_helper.read_thrift_dependencies(full_path)
 

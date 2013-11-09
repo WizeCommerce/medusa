@@ -16,14 +16,16 @@ from lib.utils.wize_utils import *
 class JavaClient(Client):
     def initialize(self):
         self.sandbox = os.path.join(self.config.work_dir, "%s/java" % self.compiler.name)
+        self.sandbox_work = os.path.join(self.config.work_dir, "%s/java_work" % self.compiler.name)
         wize_mkdir(self.sandbox)
+        wize_mkdir(self.sandbox_work)
 
     def __build_dependency__(self, business_object):
         """
             Recursively build the dependency and return a list of all dependencies found and successfully built.
         """
         self.thrift_helper.check_file(business_object)
-        self.thrift_helper.__setup_maven__()
+        self.thrift_helper.__setup_maven__(self.sandbox_work)
 
         properties = self.thrift_helper.read_thrift_properties(business_object)
         business_dependencies = self.thrift_helper.read_thrift_dependencies(business_object)
@@ -41,7 +43,7 @@ class JavaClient(Client):
         """
         service = self.thrift_helper.get_thrift_full_path(service)
         properties = self.thrift_helper.read_thrift_properties(service)
-        os.chdir(self.config.work_dir)
+        os.chdir(self.sandbox_work)
         self.thrift_helper.__setup_maven__()  #cleanup
 
         service_dependencies = self.thrift_helper.read_thrift_dependencies(service)
@@ -78,16 +80,18 @@ class JavaClient(Client):
 
         raw = template.render(WIZESCM=self.config.maven_scm(type), WIZEDEPLOYMENT=self.config.maven_deployment(type),
                               WIZEREPOS=self.config.maven_repos(type),
-                              WIZEGROUPID=properties.get("GROUPID"), WIZEID=properties.get("ARTIFACTID"),
+                              WIZEGROUPID=properties.get("GROUPID"),
+                              WIZEID=properties.get("ARTIFACTID") + self.compiler.postfix,
                               WIZEVERSION=properties.get("VERSION"),
                               WIZENAME=properties.get("ARTIFACTID"), WIZEADDITIONALDEPS=properties.get("MAVEN"),
-                              WIZEJAVASRC=java_source)
+                              WIZEJAVASRC=java_source,
+                              THRIFT_VERSION=self.compiler.version)
 
         raw = raw.replace("WIZEID", properties.get("ARTIFACTID"))
 
 
         #Write Pom.xml
-        file = open(os.path.join(self.config.work_dir, "pom.xml"), 'w')
+        file = open(os.path.join(self.sandbox_work, "pom.xml"), 'w')
         file.write(raw)
         file.close()
 
@@ -119,8 +123,8 @@ class JavaClient(Client):
                 "%s-%s has already been deployed, skipping" % (
                     properties.get("ARTIFACTID"), properties.get("VERSION")))
         else:
-            self.thrift_helper.thrift_build(thrift_file=thrift_object)
-            os.chdir(self.config.work_dir)
+            self.thrift_helper.thrift_build(thrift_file=thrift_object, sandbox=self.sandbox_work)
+            os.chdir(self.sandbox_work)
 
             cmd = "rsync -aqP {src}/ {dest}/".format(src=self.config.java_sandbox, dest=self.config.maven_dir)
             self.local_assert(os.system(cmd), "Failed to execute {cmd}".format(cmd=cmd))
@@ -166,7 +170,7 @@ class JavaClient(Client):
                     properties.get("ARTIFACTID"), properties.get("VERSION")))
             else:
                 self.thrift_helper.thrift_build(thrift_file=thrift_object)
-                os.chdir(self.config.work_dir)
+                os.chdir(self.sandbox_work)
 
                 cmd = "rsync -aqP {src}/ {dest}/".format(src=self.config.java_sandbox, dest=self.config.maven_dir)
                 self.local_assert(os.system(cmd), "Failed to execute {cmd}".format(cmd=cmd))
@@ -267,7 +271,7 @@ class JavaClient(Client):
             entry = etree.Element("dependency")
 
             artifact_id = etree.Element("artifactId")
-            artifact_id.text = properties.get("ARTIFACTID")
+            artifact_id.text = properties.get("ARTIFACTID") + self.compiler.postfix
             entry.append(artifact_id)
 
             group_id = etree.Element("groupId")

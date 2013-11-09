@@ -24,6 +24,12 @@ thrift:
         bin:  /usr/local/bin/thrift
         options: ""
         supported_languages: [java, ruby]
+        compiler_postfix: -foobar
+      - name:  thrift.git
+        bin: /Developer/thrift.git/compiler/cpp/thrift
+        options: ""
+        supported_languages: [js]
+        compiler_postfix: thrift_0_9_1
 #      - name:  finagle
 #        bin: /Developer/thrift/bin/thrift
 #        options: ""
@@ -37,9 +43,9 @@ thrift:
    thrift: src/main/thrift
    documentation:
      ##boolean denoting whether to generate / upload thrift documentation or not.
-     doc_enabled: true
+     doc_enabled: false
      ##generate documentation for --local mode.
-     doc_local_enabled: true
+     doc_local_enabled: false
      ##generate documentation for snapshot
      doc_snapshot: true
      doc_snapshot_postfix: -dev
@@ -112,8 +118,9 @@ global:
   special_version: 0.0.0
   #Modes defines the various modes of operations.  Usually these are synonymous to languages.
   languages:
-    java: Yes
-    ruby: No
+    java: true
+    ruby: false
+    js: false
   #when set to true will only run local install, and skip deployment.
   local_install: True
   service_override: null

@@ -163,6 +163,23 @@ class Config:
             except:
                 pass
 
+        @property
+        def is_js(self):
+            """
+            Boolean denoting if javascript mode is enabled.
+            """
+            try:
+                return self.__meta_data__.get("global").get("languages").get("js")
+            except:
+                return False
+
+
+        @is_js.setter
+        def is_ruby(self, value):
+            try:
+                self.__meta_data__.get("global").get("languages")["js"] = value
+            except:
+                pass
 
         @property
         def is_ruby(self):
@@ -452,6 +469,12 @@ class Config:
             except:
                 return None
 
+        def get_js_path_option(self, key):
+            try:
+                return self.__meta_data__.get("js").get(key)
+            except:
+                return None
+
         def get_ruby_path_option(self, key):
             try:
                 return os.path.join(self.work_dir, self.__meta_data__.get("ruby").get(key))
@@ -498,14 +521,32 @@ class Config:
                 return None
 
         @property
+        def js_sandbox(self):
+            """
+                Returns path to location of js sandbox. ie. transient directory for java build
+            """
+            try:
+                return self.__meta_data__.get("js").get("sandbox")
+            except:
+                return None
+
+        @js_sandbox.setter
+        def js_sandbox(self, value):
+            try:
+                self.__meta_data__.get("js")["sandbox'"] = value
+            except:
+                return
+
+        @property
         def java_sandbox(self):
             """
                 Returns path to location of java sandbox. ie. transient directory for java build
             """
             try:
-                return os.path.join(self.work_dir, self.__meta_data__.get("java").get("sandbox"))
+                return self.__meta_data__.get("java").get("sandbox")
             except:
                 return None
+
 
         @java_sandbox.setter
         def java_sandbox(self, value):
