@@ -133,7 +133,7 @@ class ConfigTests(unittest.TestCase):
         result = config.is_snapshot_doc_enabled
         self.failUnlessEqual(result, expected)
         result = config.is_local_doc_enabled
-        expected = False
+        expected = True
         self.failUnlessEqual(result, expected)
 
     def test_uber_jar_values(self):

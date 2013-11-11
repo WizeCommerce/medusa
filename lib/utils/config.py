@@ -52,28 +52,28 @@ class Config():
             Boolean denoting whether to generate thrift documentation or not.
             """
             try:
-                return self.__meta_data__.get("thrift").get("documentation").get("doc_enabled")
+                return self.__meta_data__.get("documentation").get("doc_enabled")
             except:
                 return False
 
         @is_doc_enabled.setter
         def is_doc_enabled(self, value):
             try:
-                self.__meta_data__.get("thrift").get("documentation")["doc_enabled"] = value
+                self.__meta_data__.get("documentation")["doc_enabled"] = value
             except:
                 pass
 
         @property
         def doc_server(self):
             try:
-                return self.__meta_data__.get("thrift").get("documentation").get("documentation_server")
+                return self.__meta_data__.get("documentation").get("documentation_server")
             except:
                 return {}
 
         @property
         def doc_work(self):
             try:
-                return self.__meta_data__.get("thrift").get("documentation").get("documentation_server").get(
+                return self.__meta_data__.get("documentation").get("documentation_server").get(
                     "local_path")
             except:
                 return None
@@ -84,7 +84,7 @@ class Config():
             Boolean denoting whether to generate thrift documentation for snapshots or not.
             """
             try:
-                return self.__meta_data__.get("thrift").get("documentation").get("doc_snapshot")
+                return self.__meta_data__.get("documentation").get("doc_snapshot")
             except:
                 return False
 
@@ -94,7 +94,7 @@ class Config():
             boolean denoting whether to generate doc for snapshot versions or not.
             """
             try:
-                return self.__meta_data__.get("thrift").get("documentation").get("doc_snapshot_postfix")
+                return self.__meta_data__.get("documentation").get("doc_snapshot_postfix")
             except:
                 pass
 
@@ -102,28 +102,28 @@ class Config():
         @documentation_snapshot_postfix.setter
         def documentation_snapshot_postfix(self, value):
             try:
-                self.__meta_data__.get("thrift").get("documentation")["doc_snapshot_postfix"] = value
+                self.__meta_data__.get("documentation")["doc_snapshot_postfix"] = value
             except:
                 pass
 
         @property
         def is_local_doc_enabled(self):
             try:
-                return self.__meta_data__.get("thrift").get("documentation").get("doc_local_enabled")
+                return self.__meta_data__.get("documentation").get("doc_local_enabled")
             except:
                 return False
 
         @is_local_doc_enabled.setter
         def is_local_doc_enabled(self, value):
             try:
-                self.__meta_data__.get("thrift").get("documentation")["doc_local_enabled"] = value
+                self.__meta_data__.get("documentation")["doc_local_enabled"] = value
             except:
                 pass
 
         @is_snapshot_doc_enabled.setter
         def is_snapshot_doc_enabled(self, value):
             try:
-                self.__meta_data__.get("thrift").get("documentation")["doc_snapshot"] = value
+                self.__meta_data__.get("documentation")["doc_snapshot"] = value
             except:
                 pass
 
@@ -496,6 +496,23 @@ class Config():
                 self.__meta_data__.get("java")[key] = value
             except:
                 return None
+
+        @property
+        def doc_sandbox(self):
+            """
+                Returns path to location of java sandbox. ie. transient directory for java build
+            """
+            try:
+                return self.__meta_data__.get("documentation").get("sandbox")
+            except:
+                return None
+
+        @doc_sandbox.setter
+        def doc_sandbox(self, value):
+            try:
+                self.__meta_data__.get("documentation")["sandbox'"] = value
+            except:
+                return
 
         @property
         def java_sandbox(self):

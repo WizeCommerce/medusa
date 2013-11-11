@@ -21,7 +21,8 @@ class Thrift():
         self.config = Config()
         self.log = Log(log_file="status.log", logger_name="status").log
         # defines the language compiler to spawn.
-        self.build = {"ruby": self.__thrift_ruby_build__, "java": self.__thrift_java_build__}
+        self.build = {"ruby": self.__thrift_ruby_build__, "java": self.__thrift_java_build__,
+                      "doc": self.__thrift_doc_build__}
 
     def __setup_maven__(self, sandbox="default"):
         """
@@ -66,6 +67,40 @@ class Thrift():
         if not exit_code == 0:
             self.log("failed to compile thrift file {file}".format(file=thrift_file))
             sys.exit(1)
+
+    def __thrift_doc_build__(self, thrift_file, sandbox="default"):
+        if sandbox == "default":
+            sandbox = self.config.work_dir
+        thrift_file = self.get_thrift_full_path(thrift_file)
+        os.system("rm -fr %s" % os.path.join(sandbox, self.config.doc_sandbox))
+        os.chdir(sandbox)
+
+        full_path = self.get_thrift_full_path(thrift_file)
+        dependencies = self.read_thrift_dependencies_recursively(full_path)
+        for item in dependencies:
+                file = self.get_thrift_full_path(item)
+                cmd = "{thrift_binary} -I {business_objects} -I {services} {options} {language_options} {file}".format(
+                        business_objects=self.config.get_path(type="business_object"),
+                        services=self.config.get_path(type="service_object"), thrift_binary=self.compiler.bin,
+                        file=file, options=self.compiler.options, language_options=self.compiler.language_options("doc"))
+                exit_code = subprocess.call(shlex.split(cmd))
+                if not exit_code == 0:
+                    self.log("failed to compile thrift dependency {dependency} for file {file}".format(dependency=file,file=file))
+                    sys.exit(1)
+
+
+        self.log("Generating documentation for %s" % thrift_file)
+
+        cmd = "{thrift_binary} -I {business_objects} -I {services} {options} {language_options} {file}".format(
+            business_objects=self.config.get_path(type="business_object"),
+            services=self.config.get_path(type="service_object"), thrift_binary=self.compiler.bin,
+            file=thrift_file, options=self.compiler.options, language_options=self.compiler.language_options("doc"))
+
+        exit_code = subprocess.call(shlex.split(cmd))
+        if not exit_code == 0:
+            self.log("failed to compile thrift file {file}".format(file=thrift_file))
+            sys.exit(1)
+
 
     def __thrift_ruby_build__(self, thrift_file, sandbox="default"):
         """
@@ -327,6 +362,7 @@ class ThriftCompiler(object):
     """
 
     def __init__(self, properties):
+        self.config = Config()
         self.meta_data = {}
         self.meta_data = properties.copy()
 
@@ -360,7 +396,12 @@ class ThriftCompiler(object):
         try:
             return self.meta_data.get("language_options").get(language)
         except:
-            return None
+            #fallback on global options.
+            try:
+                data = self.config.get_thrift_option("global_compiler_options")
+                return data[language]
+            except:
+                return None
 
     @property
     def options(self):
