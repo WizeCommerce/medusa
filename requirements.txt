@@ -3,3 +3,8 @@ paramiko
 argparse
 pyyaml
 jinja2
+pytest
+pytest-cov
+minimock
+unittest2
+httpretty

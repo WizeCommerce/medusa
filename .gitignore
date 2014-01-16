@@ -7,5 +7,10 @@ work
 status.log
 *.html
 doc/html
-#virtualenv default listed below
-mypython/
+.travis.yaml
+build
+cover
+dist
+thrift_medusa.egg-info
+.coverage
+htmlcov

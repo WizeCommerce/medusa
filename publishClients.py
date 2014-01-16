@@ -1,21 +1,32 @@
 #!/usr/bin/env python
+"""
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+"""
+
 __author__ = 'sfaci'
 
-import os
 import sys
-import json
 import subprocess
 import argparse
 
-from lib.utils.wize_utils import *
-from lib.utils.config import Config
-from lib.utils.thrift import ThriftCompiler
-from lib.utils.thrift import Thrift
-from lib.clients.java_client import JavaClient
-from lib.clients.ruby_client import RubyClient
-from lib.clients.documentation_client import Documentation
+from thrift_medusa.utils.wize_utils import *
+from thrift_medusa.utils.config import Config
+from thrift_medusa.thrift.thrift_compiler import ThriftCompiler
+from thrift_medusa.clients.java_client import JavaClient
+from thrift_medusa.clients.ruby_client import RubyClient
+from thrift_medusa.clients.documentation_client import Documentation
 
-from lib.utils.log import Log
+from thrift_medusa.utils.log import Log
 from multiprocessing import Process
 
 
@@ -25,14 +36,16 @@ class PublishClient():
     """
 
     def __init__(self):
-        self.removeStructure("logs")
+        self.client_list = []
+        self.remove_structure("logs")
         wize_mkdir("logs")
         self.business_objects = []
         self.service_objects = []
         self.config = Config()
-        self.log = Log(log_file=os.path.join(self.config.repo_dir, "logs/status.log"), logger_name="definitions").get_logger()
+        self.log = Log(log_file=os.path.join(self.config.repo_dir, "logs/status.log"),
+                       logger_name="definitions").get_logger()
 
-    def removeStructure(self, dir):
+    def remove_structure(self, dir):
         """
             Simple method that deletes a directory
         """
@@ -53,7 +66,7 @@ class PublishClient():
             Remove old directory structure and re-copy all the files and dependencies
             from the appropriate repos.
         """
-        self.removeStructure(self.config.work_dir)
+        self.remove_structure(self.config.work_dir)
         os.mkdir(self.config.work_dir)
 
         self.business_objects = build_file_list(self.config.get_path(type="business_object"), ".thrift")
@@ -73,7 +86,7 @@ class PublishClient():
             if self.config.is_ruby and item.is_language_supported("ruby"):
                 self.client_list.append(RubyClient(thrift_objects, item))
             if self.config.is_doc_enabled and item.is_language_supported("doc"):
-               self.client_list.append(Documentation(thrift_objects, item))
+                self.client_list.append(Documentation(thrift_objects, item))
 
     def process_thrift_services(self):
         """
@@ -112,34 +125,10 @@ def display_compilers():
     config = Config()
     compilers = config.get_thrift_option("compilers")
     for item in compilers:
-        print("found compiler %s with binary at: %s which supports: %s languages" %(item.get('name'), item.get('bin'),
-                                      ', '.join(map(str, item.get('supported_languages')))))
+        print("found compiler %s with binary at: %s which supports: %s languages" % (item.get('name'), item.get('bin'),
+                                                                                     ', '.join(map(str, item.get(
+                                                                                         'supported_languages')))))
     sys.exit(0)
-
-def update_compiler_list(setCompilerList):
-        config = Config()
-        currentKeys = []
-        currentDict = {}
-        currentList = config.get_thrift_option("compilers")
-        map(lambda i: currentKeys.append(i.get("name")), currentList)
-
-        for item in currentList:
-            currentDict[item.get('name')] = item
-
-
-        override = setCompilerList.split(",")
-        keys = list(set(currentKeys).intersection(set(override)))
-        newList = []
-        for key in keys:
-            newList.append(currentDict.get(key))
-
-        if len(newList) > 0:
-            config.set_thrift_option("compilers", newList)
-        else:
-            print("Failed to set compiler to %s" % setCompilerList)
-            sys.exit(1)
-
-        display_compilers()
 
 def main():
     parser = argparse.ArgumentParser(description='Client Generation Script')
@@ -150,15 +139,12 @@ def main():
                         help="Enables RubyMode, default is Ruby + Java (Local Mode Only)")
     parser.add_argument('--java', action="store_true", dest="java", default=False,
                         help="Enables JavaMode, default is Ruby + Java  (Local Mode Only) ")
-    parser.add_argument('--service', action="store", dest="service", type=str,
-                        help="Override list of services, and use the one specified (requires full path). (Local Mode Only)")
+    parser.add_argument('--thrift-file', action="store", dest="thrift_file", type=str,
+                        help="Override list of services, and use the one specified (Local Mode Only)")
     parser.add_argument('--config', action="store", dest="config", type=str,
                         help="Override default config file and specify your own yaml config")
     parser.add_argument('--compilers', action="store_true", dest="compilers", default=False,
                         help="will list all supported compilers. (Not fully supported)")
-    parser.add_argument('--setcompilers', action="store", dest="setcompilers", type=str,
-                        help="list the names of the compilers to use (see output of --compilers")
-
 
     args = parser.parse_args()
     if args.config is None:
@@ -167,31 +153,21 @@ def main():
         config = Config(args.config)
 
     config.set_local(args.local)
-    config.set_service_override(args.service)
+    config.set_service_override(args.thrift_file)
 
-    if args.service is not None:
+    if args.thrift_file is not None:
         config.set_local(True)
-
 
     if args.compilers:
         display_compilers()
-
-    if args.setcompilers:
-        update_compiler_list(args.setcompilers)
-
-     #clean up workspace.
-    if config.is_local():
-        os.system("rm -fvr %s" % config.localInstall)
 
     publish_client = PublishClient()
 
     ## these options can only be used in conjunction with local mode
     if config.is_local():
-        os.system("rm -fr {work_dir}".format(work_dir=config.work_dir))
-        wize_mkdir(config.work_dir)
         if args.ruby and args.java:
             print "WARNING: you really should use rubyOverride or JavaOverride, " \
-                  "if you pass both it can will fall back on default behavior.  (ie. ommit both of them)"
+                  "if you pass both it can will fall back on default behavior.  (ie. omit both of them)"
         elif args.ruby:
             config.set_languages({"ruby": True})
         elif args.java:
@@ -203,6 +179,7 @@ def main():
 
     if args.profile:
         import cProfile
+
         cProfile.run('profileProject()')
     else:
         # Create Repo Structure
@@ -210,11 +187,11 @@ def main():
         # Loop through all of our services check for updates
         publish_client.process_thrift_services()
 
-def profileProject():
-   publish_client = PublishClient()
-   publish_client.create_structure()
-   publish_client.process_thrift_services()
 
+def profile_project():
+    publish_client = PublishClient()
+    publish_client.create_structure()
+    publish_client.process_thrift_services()
 
 
 if __name__ == "__main__":
