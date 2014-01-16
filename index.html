@@ -1,0 +1,1133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.7" />
+<title>Thrift Definition Automated Deployment System</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+tt {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+}
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+.monospaced {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+}
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install(2);
+/*]]>*/
+</script>
+</head>
+<body class="article">
+<div id="header">
+<h1>Thrift Definition Automated Deployment System</h1>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph"><p><a href="http://WizeCommerce.github.com/medusa/slides.html">Slides</a></p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_general_info">General Info</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_what_is_thrift">What is Thrift</h3>
+<div class="paragraph"><p>Thirft is an interface definition language that is used to define and create services for numerous languages.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_what_is_this_tool_for">What is this tool for?</h3>
+<div class="paragraph"><p>This is a thrift generation tool designed to package the thrift generated code into language specific containers.  Currently supporting java (ie. maven artifacts), ruby (gems) and in theory can be extended to any number of  <a href="http://wiki.apache.org/thrift/LibraryFeatures?action=show&amp;redirect=LanguageSupport">languages</a> and package environment associated with those languages.</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_environment_setup">Environment Setup</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_thrift">Thrift</h3>
+<div class="paragraph"><p>The first thing you need is the thrift compiler installed.  We (WizeCommerce) currently have a hard dependency on version 0.6.1 of <a href="http://thrift.apache.org/">thrift</a>.  You don&#8217;t have to use this particular version, and in the future this tool will support multiple thrift compilers.</p></div>
+<div class="paragraph"><p>Possibly helpful:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="http://www.saltycrane.com/blog/2011/06/install-thrift-ubuntu-1010-maverick/">http://www.saltycrane.com/blog/2011/06/install-thrift-ubuntu-1010-maverick/</a>
+</p>
+</li>
+<li>
+<p>
+<a href="http://www.geilthings.com/wiki/Thrift">http://www.geilthings.com/wiki/Thrift</a>
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_python_required">Python (Required)</h3>
+<div class="paragraph"><p>I suggest using pip to install your dependency.  A combination of pip + virtualenv would be ideal, but it&#8217;s a matter of preference as long as you have all the dependencies.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Install Pip via wget, apt-get or whatever makes sense in your environment.
+</p>
+</li>
+<li>
+<p>
+sudo pip install virtualenv-distribute
+</p>
+</li>
+<li>
+<p>
+virtualenv --no-site-packages mypython #mypython is an arbitrary name, replace it with whatever is appropriate
+</p>
+</li>
+<li>
+<p>
+source ~/mypython/bin/activate
+</p>
+</li>
+<li>
+<p>
+pip install -r requirements.txt
+</p>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_choose_one">Choose One</h3>
+<div class="paragraph"><p>Neither Java nor Ruby is required, but you do need to have the env for your language of choice you will build against.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_java_optional">Java (Optional)</h3>
+<div class="paragraph"><p>Naturally this would require you to install a JDK, Oracle JDK recommended but JVM should work.  Let&#8217;s stick to one
+that have the same syntax as oracle.  ie. you&#8217;ll probably need to tweak the script if you&#8217;re running gcj or some other <em>special</em> java.</p></div>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>sudo apt-get install maven  oracle-java<span style="color: #993399">7</span>-jdk <span style="font-style: italic"><span style="color: #9A1900">##Or equivalent for your OS.</span></span></tt></pre></div></div>
+</div>
+<div class="sect2">
+<h3 id="_ruby_optional">Ruby (Optional)</h3>
+<div class="paragraph"><p>Naturally this is needed if you&#8217;re generating gems.</p></div>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>sudo apt-get install ruby-dev rubygems  <span style="font-style: italic"><span style="color: #9A1900">##Or equivalent for your OS.</span></span>
+sudo gem install thrift bundler rake</tt></pre></div></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_usage">Usage</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_running_the_tests">Running The Tests</h3>
+<div class="paragraph"><p>install the pre-requirements</p></div>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>sudo apt-get install nosetest
+nosetests <span style="font-style: italic"><span style="color: #9A1900">#will execute all your unit tests</span></span></tt></pre></div></div>
+</div>
+<div class="sect2">
+<h3 id="_local_check">Local Check</h3>
+<div class="paragraph"><p>Default behavior</p></div>
+<div class="listingblock">
+<div class="title">/publishClients.py #will deploy and build all the artifacts for java.</div>
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>Running everything</tt></pre></div></div>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="color: #990000">.</span>/publishClients<span style="color: #990000">.</span>py --local</tt></pre></div></div>
+<div class="paragraph"><p>Java Only</p></div>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="color: #990000">.</span>/publishClients<span style="color: #990000">.</span>py --local  --java</tt></pre></div></div>
+<div class="paragraph"><p>Ruby Only</p></div>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="color: #990000">.</span>/publishClients<span style="color: #990000">.</span>py --local  --ruby</tt></pre></div></div>
+<div class="paragraph"><p>Only one service</p></div>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="color: #990000">.</span>/publishClients<span style="color: #990000">.</span>py --local --service /fully/qualified/path/to/thrift/file<span style="color: #990000">.</span>thrift  --rubyModeOverride</tt></pre></div></div>
+</div>
+<div class="sect2">
+<h3 id="_help_i_need_more_assistance">HELP!! I need more assistance</h3>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="font-style: italic"><span style="color: #9A1900">#Note, as of now, all override options only work in conjunctions with --local mode with the exception of</span></span>
+--config<span style="color: #990000">.</span></tt></pre></div></div>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="color: #990000">.</span>/publishClients<span style="color: #990000">.</span>py --help</tt></pre></div></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_misc_info">Misc Info</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_wildcard_reserved_words">WildCard Reserved Words</h3>
+<div class="paragraph"><p>These files are primarily used in the pom.xml and Ruby related build files.  You can find them under the config/
+directory</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+WIZESCM       &#8201;&#8212;&#8201;defines the XML that will be injected into the pom defining the git repo tags and properties.
+</p>
+</li>
+<li>
+<p>
+WIZEDEPLOYMENT&#8201;&#8212;&#8201;defines the deployment URL to be used when invoked directly via maven.
+</p>
+</li>
+<li>
+<p>
+WIZEREPOS     &#8201;&#8212;&#8201;defines third party maven repos to look for artifacts.
+</p>
+</li>
+<li>
+<p>
+WIZEGROUPID   &#8201;&#8212;&#8201;naming/groupId conventions.  If languages supports it.  example:  com.wizecommerce.data
+</p>
+</li>
+<li>
+<p>
+WIZEID        &#8201;&#8212;&#8201;object ID, for example user_object.  In some cases equivalent to WIZENAME
+</p>
+</li>
+<li>
+<p>
+WIZEVERSION   &#8201;&#8212;&#8201;version of artifact being released
+</p>
+</li>
+<li>
+<p>
+WIZENAME
+</p>
+</li>
+<li>
+<p>
+WIZENAMECAMEL&#8201;&#8212;&#8201;Camel case version of wizename.
+</p>
+</li>
+<li>
+<p>
+WIZEADDITIONALDEPS&#8201;&#8212;&#8201;special variable that is replaced with text representing the dependencies of the object or service.
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_thrift_reserved_const">Thrift Reserved Const</h3>
+<div class="paragraph"><p>These constants are expected and occasionally required in order for this automation to work.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+VERSION     &#8201;&#8212;&#8201;The only required field in your thrift file.
+</p>
+</li>
+<li>
+<p>
+GROUPID     &#8201;&#8212;&#8201;equivalent to WIZEGROUPID
+</p>
+</li>
+<li>
+<p>
+ARTIFACTID  &#8201;&#8212;&#8201;equivalent to WIZENAME overrides the default which is based on file name parsing.
+</p>
+</li>
+<li>
+<p>
+namespace rb &#8201;&#8212;&#8201;This is required since by default we are releasing ruby gems.  The name has to follow conventions of other files otherwise it will fail gerrit checks.
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_defining_my_first_service">Defining My First Service</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_creating_my_businessobjects">Creating my BusinessObjects</h3>
+<div class="paragraph"><p><strong>Rules of engagement</strong>:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Every business object should follow the naming convention and format in <em>wizecommerce.biz.example.thrift</em> which is located in <em>thrift/business-objects</em>
+</p>
+</li>
+<li>
+<p>
+the file name is important and should folow the same conventions.
+</p>
+</li>
+<li>
+<p>
+the artifact ID generated is based on the file name. <em>wizecommerce.bizobj.example.thrift</em> will generate:   <strong>example-bizobj</strong> (Java) and <strong>example_bizobj</strong> (ruby)
+</p>
+</li>
+<li>
+<p>
+dashes (-) and underscores (_) are not allowed in the thrift filenames.
+</p>
+</li>
+<li>
+<p>
+If additional prefix are desired in the object name they can be in appended to the object after bizobj.
+</p>
+</li>
+<li>
+<p>
+<em>wizecommerce.bizobj.event.foobar.thrift</em> will generate: <strong>event-foobar-bizobj</strong> (java) and <strong>event_foobar_bizobj</strong> (ruby)
+</p>
+</li>
+<li>
+<p>
+ruby namespace for <em>wizecommerce.bizobj.event.foobar.thrift</em> will be <strong>namespace rb EventFoobarBizobj</strong> and it is a required field.
+</p>
+</li>
+<li>
+<p>
+create an additional thrift file for every enum, exception, and struct you need to define.
+</p>
+</li>
+<li>
+<p>
+If the object contains an <em>enum</em> it should be named accordingly and include a <em>.enum.</em> in the name.
+</p>
+</li>
+<li>
+<p>
+If the object contains an <em>exception</em> it should be named accordingly and include a <em>.exception.</em> in the name.
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_creating_my_service">Creating my Service</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+include the business object you&#8217;ve created in the previous step.
+</p>
+</li>
+<li>
+<p>
+typedef or use the absolute path then once you&#8217;re ready, test your service.
+</p>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="color: #990000">.</span>/publishClients<span style="color: #990000">.</span>py --local --java --service <span style="color: #009900">$(pwd)</span>/thrift/service/wizecommerce<span style="color: #990000">.</span>services<span style="color: #990000">.</span>mynewservice<span style="color: #990000">.</span>thrift</tt></pre></div></div>
+</li>
+</ul></div>
+<div class="paragraph"><p>Naturally you&#8217;ll need to verify it works for all languages before it can merge into our code base.  Current expectations are for your thrfit file to work for Ruby and java.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_developing_recommended_workflow">Developing Recommended Workflow</h3>
+<div class="sect3">
+<h4 id="_java">Java</h4>
+<div class="paragraph"><p>To generation snapshots of all thrift files simply run.</p></div>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt><span style="color: #990000">.</span>/publishClients<span style="color: #990000">.</span>py --local --java</tt></pre></div></div>
+<div class="paragraph"><p>a -SNAPSHOT version will be installed in your .m2 directory.  Simple update your pom.xml to point to the latest version and continue your development.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_ruby">Ruby</h4>
+<div class="paragraph"><p></p></div>
+<div class="paragraph"><p>If you wish to consume the already deployed gems, you should add <a href="http://rubygems.corp.nextag.com:8808">http://rubygems.corp.nextag.com:8808</a> as a source.</p></div>
+<div class="listingblock">
+<div class="content"><!-- Generator: GNU source-highlight 3.1.6
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<pre><tt>gem sources -a http<span style="color: #990000">:</span>//rubygems<span style="color: #990000">.</span>corp<span style="color: #990000">.</span>nextag<span style="color: #990000">.</span>com<span style="color: #990000">:</span><span style="color: #993399">8808</span></tt></pre></div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quirks_and_oddities">Quirks and Oddities</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Usually (in java/maven world at least), you work on a VERSION-SNAPSHOT version and once you&#8217;re done the -SNAPSHOT is stripped away and is released.</p></div>
+<div class="paragraph"><p>So if I&#8217;m working on 0.0.1-SNAPSHOT (that&#8217;s my dev version, 0.0.1 doesn&#8217;t exist yet) and if I do a release for 0.0.1 is the dev version is incremented to 0.0.2-SNAPSHOT.</p></div>
+<div class="paragraph"><p>I use a slighty different convention.  The version in the thrift never includes a -SNAPSHOT or any other pre/postfix.  if the latest version in the repo is 0.0.1.  Then the snapshot version is 0.0.2-SNAPSHOT.  Once the value is incremented.  the next build will released 0.0.2 and the snapshot version becomes 0.0.3-SNAPSHOT.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_coming_soon_feature_requests">Coming Soon/Feature Requests</h2>
+<div class="sectionbody">
+<div class="ulist"><ul>
+<li>
+<p>
+Open an issue on <a href="https://github.com/WizeCommerce/medusa/issues">https://github.com/WizeCommerce/medusa/issues</a>.  If you&#8217;ve already implemented a fix, simply send a patch via the usual github means.
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2014-01-15 20:04:34 PST
+</div>
+</div>
+</body>
+</html>
