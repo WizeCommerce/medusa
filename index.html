@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 8.6.7" />
-<title>Thrift Definition Automated Deployment System</title>
+<title>Medusa   Thrift Definition Automated Deployment System</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -737,21 +737,39 @@ asciidoc.install(2);
 </head>
 <body class="article">
 <div id="header">
-<h1>Thrift Definition Automated Deployment System</h1>
+<h1>Medusa   Thrift Definition Automated Deployment System</h1>
 <div id="toc">
   <div id="toctitle">Table of Contents</div>
   <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
 </div>
 </div>
 <div id="content">
-<div id="preamble">
+<div class="sect1">
+<h2 id="_misc_documents">Misc Documents</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="http://WizeCommerce.github.com/medusa/slides.html">Slides</a></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="http://WizeCommerce.github.com/medusa/slides.html">HTML Slides</a>
+</p>
+</li>
+<li>
+<p>
+<a href="http://WizeCommerce.github.com/medusa/doxygen/">Doxygen Documentation</a>
+</p>
+</li>
+</ul></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_general_info">General Info</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_what_8217_s_up_with_the_medusa_name">What&#8217;s up with the medusa name?</h3>
+<div class="paragraph"><p>I&#8217;ve been working heavily with cassandra based projects many of which seem to very mythology driven.  Cassandra, Hector, Astynax, Priam, Asguard and such.</p></div>
+<div class="paragraph"><p><br /></p></div>
+<div class="paragraph"><p>Since this is a python code base, I thought something snake related was appropriate, hence Medusa.</p></div>
+</div>
 <div class="sect2">
 <h3 id="_what_is_thrift">What is Thrift</h3>
 <div class="paragraph"><p>Thirft is an interface definition language that is used to define and create services for numerous languages.</p></div>
@@ -767,7 +785,7 @@ asciidoc.install(2);
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_thrift">Thrift</h3>
-<div class="paragraph"><p>The first thing you need is the thrift compiler installed.  We (WizeCommerce) currently have a hard dependency on version 0.6.1 of <a href="http://thrift.apache.org/">thrift</a>.  You don&#8217;t have to use this particular version, and in the future this tool will support multiple thrift compilers.</p></div>
+<div class="paragraph"><p>The first thing you need is the thrift compiler installed.  We (WizeCommerce) currently have a hard dependency on version 0.6.1 of <a href="http://thrift.apache.org/">thrift</a>.  You don&#8217;t have to use this particular version.</p></div>
 <div class="paragraph"><p>Possibly helpful:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -784,16 +802,16 @@ asciidoc.install(2);
 </div>
 <div class="sect2">
 <h3 id="_python_required">Python (Required)</h3>
-<div class="paragraph"><p>I suggest using pip to install your dependency.  A combination of pip + virtualenv would be ideal, but it&#8217;s a matter of preference as long as you have all the dependencies.</p></div>
+<div class="paragraph"><p>I suggest using pip to install your dependencies.  A combination of pip + virtualenv would be ideal, but it&#8217;s a matter of preference as long as you have all the dependencies on your system..</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
-Install Pip via wget, apt-get or whatever makes sense in your environment.
+Install Pip via wget, apt-get or whatever makes sense in your environment.  <a href="http://www.pip-installer.org/en/latest/">Pip Installer</a>
 </p>
 </li>
 <li>
 <p>
-sudo pip install virtualenv-distribute
+sudo pip install virtualenv-distribute  # or use your system&#8217;s package manager to install virtualenv
 </p>
 </li>
 <li>
@@ -812,15 +830,67 @@ pip install -r requirements.txt
 </p>
 </li>
 </ol></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+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
+YII=" />
+</td>
+<td class="content">You&#8217;ll need to run source ~/mypython/bin/activate before using this code if you choose to install your dependencies via virtualenv.</td>
+</tr></table>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_choose_one">Choose One</h3>
-<div class="paragraph"><p>Neither Java nor Ruby is required, but you do need to have the env for your language of choice you will build against.</p></div>
+<h3 id="_install_language_requirements">Install Language requirements</h3>
+<div class="paragraph"><p>No <em>language</em> except python is really required, but you&#8217;ll need to install the dependencies for whichever language you wish to deploy artifacts for.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_java_optional">Java (Optional)</h3>
 <div class="paragraph"><p>Naturally this would require you to install a JDK, Oracle JDK recommended but JVM should work.  Let&#8217;s stick to one
-that have the same syntax as oracle.  ie. you&#8217;ll probably need to tweak the script if you&#8217;re running gcj or some other <em>special</em> java.</p></div>
+that has the same syntax as oracle.  ie. you&#8217;ll probably need to tweak the script if you&#8217;re running gcj or some other <em>special</em> java.</p></div>
 <div class="listingblock">
 <div class="content"><!-- Generator: GNU source-highlight 3.1.6
 by Lorenzo Bettini
@@ -1052,6 +1122,58 @@ If the object contains an <em>exception</em> it should be named accordingly and 
 </p>
 </li>
 </ul></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+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
+YII=" />
+</td>
+<td class="content">These are internal <em>rules</em>.  Since this project is being open source consider them recommended guidelines unless you work for us, then they&#8217;re rules.</td>
+</tr></table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_creating_my_service">Creating my Service</h3>
@@ -1098,6 +1220,58 @@ by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
 <pre><tt>gem sources -a http<span style="color: #990000">:</span>//rubygems<span style="color: #990000">.</span>corp<span style="color: #990000">.</span>nextag<span style="color: #990000">.</span>com<span style="color: #990000">:</span><span style="color: #993399">8808</span></tt></pre></div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+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
+YII=" />
+</td>
+<td class="content">You should replace the hostname, with something appropriate.  Unless you&#8217;re running in local mode medusa will attempt to deploy the gems to your Gem server.</td>
+</tr></table>
+</div>
 </div>
 </div>
 </div>
@@ -1105,9 +1279,13 @@ http://www.gnu.org/software/src-highlite -->
 <div class="sect1">
 <h2 id="_quirks_and_oddities">Quirks and Oddities</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Usually (in java/maven world at least), you work on a VERSION-SNAPSHOT version and once you&#8217;re done the -SNAPSHOT is stripped away and is released.</p></div>
-<div class="paragraph"><p>So if I&#8217;m working on 0.0.1-SNAPSHOT (that&#8217;s my dev version, 0.0.1 doesn&#8217;t exist yet) and if I do a release for 0.0.1 is the dev version is incremented to 0.0.2-SNAPSHOT.</p></div>
-<div class="paragraph"><p>I use a slighty different convention.  The version in the thrift never includes a -SNAPSHOT or any other pre/postfix.  if the latest version in the repo is 0.0.1.  Then the snapshot version is 0.0.2-SNAPSHOT.  Once the value is incremented.  the next build will released 0.0.2 and the snapshot version becomes 0.0.3-SNAPSHOT.</p></div>
+<div class="paragraph"><p>Usually (in java/maven world at least), you work on a VERSION-SNAPSHOT version and once you&#8217;re done the -SNAPSHOT is stripped away and is released.
+So if I&#8217;m working on 0.0.1-SNAPSHOT (that&#8217;s my dev version, 0.0.1 doesn&#8217;t exist yet) and if I do a release for 0.0.1 is the dev version is
+incremented to 0.0.2-SNAPSHOT.</p></div>
+<div class="paragraph"><p><br /></p></div>
+<div class="paragraph"><p>I use a slighty different convention.  The version in the thrift file never includes a -SNAPSHOT or any other pre/postfix.  if the latest version in the repo is
+0.0.1.  Then the snapshot version is 0.0.2-SNAPSHOT.  Once the value is incremented.  the next build will released 0.0.2 and the snapshot version
+becomes 0.0.3-SNAPSHOT.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1126,7 +1304,7 @@ Open an issue on <a href="https://github.com/WizeCommerce/medusa/issues">https:/
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-01-15 20:04:34 PST
+Last updated 2014-01-15 21:35:09 PST
 </div>
 </div>
 </body>

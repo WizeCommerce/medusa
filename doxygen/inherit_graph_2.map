@@ -1,0 +1,9 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node3" href="$classlib_1_1test_1_1test__config_1_1ConfigTests.html" title="lib.test.test_config.Config\lTests" alt="" coords="151,5,321,51"/>
+<area shape="rect" id="node5" href="$classlib_1_1test_1_1test__java__client_1_1JavaClientTests.html" title="lib.test.test_java\l_client.JavaClientTests" alt="" coords="157,74,315,121"/>
+<area shape="rect" id="node7" href="$classlib_1_1test_1_1test__naming__helper_1_1CamelConversionTests.html" title=" " alt="" coords="133,143,339,190"/>
+<area shape="rect" id="node9" href="$classlib_1_1test_1_1test__server_1_1TestServer.html" title="lib.test.test_server.Test\lServer" alt="" coords="156,213,316,259"/>
+<area shape="rect" id="node11" href="$classlib_1_1test_1_1test__status_1_1StatusTests.html" title="lib.test.test_status.Status\lTests" alt="" coords="151,282,321,329"/>
+<area shape="rect" id="node13" href="$classlib_1_1test_1_1test__thrift_1_1ThriftTests.html" title="lib.test.test_thrift.Thrift\lTests" alt="" coords="159,351,313,398"/>
+<area shape="rect" id="node15" href="$classlib_1_1test_1_1test__wize__utils_1_1NewTests.html" title="lib.test.test_wize\l_utils.NewTests" alt="" coords="176,421,296,467"/>
+</map>

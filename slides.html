@@ -3,7 +3,7 @@
 <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Thrift Definition Automated Deployment System</title>
+        <title>Medusa   Thrift Definition Automated Deployment System</title>
         <meta name="viewport" content="width=1024, user-scalable=no">
         <meta name="generator" content="AsciiDoc 8.6.7" />
         
@@ -2240,11 +2240,27 @@ This module splits a long slide into multiple slides.
 </head>
 <body class="deck-container">
 <section class="slide" id="title-slide">
-        <h1>Thrift Definition Automated Deployment System</h1>
+        <h1>Medusa   Thrift Definition Automated Deployment System</h1>
 </section>
-<p><a href="http://WizeCommerce.github.com/medusa/slides.html">Slides</a></p>
+<section class="slide">
+<h2>Misc Documents</h2>
+<ul>
+<li class="">
+<a href="http://WizeCommerce.github.com/medusa/slides.html">HTML Slides</a>
+</li>
+<li class="">
+<a href="http://WizeCommerce.github.com/medusa/doxygen/">Doxygen Documentation</a>
+</li>
+</ul>
+</section>
 <section class="slide">
 <h2>General Info</h2>
+<div class="sect2">
+<h3 id="_what_8217_s_up_with_the_medusa_name">What&#8217;s up with the medusa name?</h3>
+<p>I&#8217;ve been working heavily with cassandra based projects many of which seem to very mythology driven.  Cassandra, Hector, Astynax, Priam, Asguard and such.</p>
+<p><br /></p>
+<p>Since this is a python code base, I thought something snake related was appropriate, hence Medusa.</p>
+</div>
 <div class="sect2">
 <h3 id="_what_is_thrift">What is Thrift</h3>
 <p>Thirft is an interface definition language that is used to define and create services for numerous languages.</p>
@@ -2258,7 +2274,7 @@ This module splits a long slide into multiple slides.
 <h2>Environment Setup</h2>
 <div class="sect2">
 <h3 id="_thrift">Thrift</h3>
-<p>The first thing you need is the thrift compiler installed.  We (WizeCommerce) currently have a hard dependency on version 0.6.1 of <a href="http://thrift.apache.org/">thrift</a>.  You don&#8217;t have to use this particular version, and in the future this tool will support multiple thrift compilers.</p>
+<p>The first thing you need is the thrift compiler installed.  We (WizeCommerce) currently have a hard dependency on version 0.6.1 of <a href="http://thrift.apache.org/">thrift</a>.  You don&#8217;t have to use this particular version.</p>
 <p>Possibly helpful:</p>
 <ul>
 <li class="">
@@ -2271,16 +2287,16 @@ This module splits a long slide into multiple slides.
 </div>
 <div class="sect2">
 <h3 id="_python_required">Python (Required)</h3>
-<p>I suggest using pip to install your dependency.  A combination of pip + virtualenv would be ideal, but it&#8217;s a matter of preference as long as you have all the dependencies.</p>
+<p>I suggest using pip to install your dependencies.  A combination of pip + virtualenv would be ideal, but it&#8217;s a matter of preference as long as you have all the dependencies on your system..</p>
 <ol>
 <li class="">
 <p>
-Install Pip via wget, apt-get or whatever makes sense in your environment.
+Install Pip via wget, apt-get or whatever makes sense in your environment.  <a href="http://www.pip-installer.org/en/latest/">Pip Installer</a>
 </p>
 </li>
 <li class="">
 <p>
-sudo pip install virtualenv-distribute
+sudo pip install virtualenv-distribute  # or use your system&#8217;s package manager to install virtualenv
 </p>
 </li>
 <li class="">
@@ -2299,15 +2315,23 @@ pip install -r requirements.txt
 </p>
 </li>
 </ol>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">You&#8217;ll need to run source ~/mypython/bin/activate before using this code if you choose to install your dependencies via virtualenv.</td>
+</tr></table>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_choose_one">Choose One</h3>
-<p>Neither Java nor Ruby is required, but you do need to have the env for your language of choice you will build against.</p>
+<h3 id="_install_language_requirements">Install Language requirements</h3>
+<p>No <em>language</em> except python is really required, but you&#8217;ll need to install the dependencies for whichever language you wish to deploy artifacts for.</p>
 </div>
 <div class="sect2">
 <h3 id="_java_optional">Java (Optional)</h3>
 <p>Naturally this would require you to install a JDK, Oracle JDK recommended but JVM should work.  Let&#8217;s stick to one
-that have the same syntax as oracle.  ie. you&#8217;ll probably need to tweak the script if you&#8217;re running gcj or some other <em>special</em> java.</p>
+that has the same syntax as oracle.  ie. you&#8217;ll probably need to tweak the script if you&#8217;re running gcj or some other <em>special</em> java.</p>
 <div class="listingblock">
 <div class="content"><!-- Generator: GNU source-highlight 3.1.6
 by Lorenzo Bettini
@@ -2487,6 +2511,14 @@ If the object contains an <em>enum</em> it should be named accordingly and inclu
 If the object contains an <em>exception</em> it should be named accordingly and include a <em>.exception.</em> in the name.
 </li>
 </ul>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">These are internal <em>rules</em>.  Since this project is being open source consider them recommended guidelines unless you work for us, then they&#8217;re rules.</td>
+</tr></table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_creating_my_service">Creating my Service</h3>
@@ -2529,14 +2561,26 @@ by Lorenzo Bettini
 http://www.lorenzobettini.it
 http://www.gnu.org/software/src-highlite -->
 <pre><tt>gem sources -a http<span style="color: #990000">:</span>//rubygems<span style="color: #990000">.</span>corp<span style="color: #990000">.</span>nextag<span style="color: #990000">.</span>com<span style="color: #990000">:</span><span style="color: #993399">8808</span></tt></pre></div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">You should replace the hostname, with something appropriate.  Unless you&#8217;re running in local mode medusa will attempt to deploy the gems to your Gem server.</td>
+</tr></table>
+</div>
 </div>
 </div>
 </section>
 <section class="slide">
 <h2>Quirks and Oddities</h2>
-<p>Usually (in java/maven world at least), you work on a VERSION-SNAPSHOT version and once you&#8217;re done the -SNAPSHOT is stripped away and is released.</p>
-<p>So if I&#8217;m working on 0.0.1-SNAPSHOT (that&#8217;s my dev version, 0.0.1 doesn&#8217;t exist yet) and if I do a release for 0.0.1 is the dev version is incremented to 0.0.2-SNAPSHOT.</p>
-<p>I use a slighty different convention.  The version in the thrift never includes a -SNAPSHOT or any other pre/postfix.  if the latest version in the repo is 0.0.1.  Then the snapshot version is 0.0.2-SNAPSHOT.  Once the value is incremented.  the next build will released 0.0.2 and the snapshot version becomes 0.0.3-SNAPSHOT.</p>
+<p>Usually (in java/maven world at least), you work on a VERSION-SNAPSHOT version and once you&#8217;re done the -SNAPSHOT is stripped away and is released.
+So if I&#8217;m working on 0.0.1-SNAPSHOT (that&#8217;s my dev version, 0.0.1 doesn&#8217;t exist yet) and if I do a release for 0.0.1 is the dev version is
+incremented to 0.0.2-SNAPSHOT.</p>
+<p><br /></p>
+<p>I use a slighty different convention.  The version in the thrift file never includes a -SNAPSHOT or any other pre/postfix.  if the latest version in the repo is
+0.0.1.  Then the snapshot version is 0.0.2-SNAPSHOT.  Once the value is incremented.  the next build will released 0.0.2 and the snapshot version
+becomes 0.0.3-SNAPSHOT.</p>
 </section>
 <section class="slide">
 <h2>Coming Soon/Feature Requests</h2>

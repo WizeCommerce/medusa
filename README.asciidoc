@@ -1,15 +1,26 @@
-Thrift Definition Automated Deployment System
-=============================================
+Medusa   Thrift Definition Automated Deployment System
+======================================================
 // asciidoc -a icons -a data-uri -a toc README.asciidoc
 // deck.js info:
 // download latest backend: https://github.com/downloads/houqp/asciidoc-deckjs/deckjs-1.6.2.zip
 // asciidoc --backend install deckjs-1.6.2.zip
 // asciidoc -b deckjs README.asciidoc
 
-http://WizeCommerce.github.com/medusa/slides.html[Slides]
+Misc Documents
+--------------
+ - http://WizeCommerce.github.com/medusa/slides.html[HTML Slides]
+ - http://WizeCommerce.github.com/medusa/doxygen/[Doxygen Documentation]
 
 General Info
 -------------
+
+What's up with the medusa name?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I've been working heavily with Cassandra based projects many of which seem to very mythology driven.  Cassandra, Hector, Astynax, Priam, Asguard and such.
+
+{empty} +
+
+Since this is a python code base, I thought something snake related was appropriate, hence Medusa.  
 
 What is Thrift
 ~~~~~~~~~~~~~~
@@ -25,7 +36,7 @@ Environment Setup
 
 Thrift
 ~~~~~~
-The first thing you need is the thrift compiler installed.  We (WizeCommerce) currently have a hard dependency on version 0.6.1 of http://thrift.apache.org/[thrift].  You don't have to use this particular version, and in the future this tool will support multiple thrift compilers.   
+The first thing you need is the thrift compiler installed.  We (WizeCommerce) currently have a hard dependency on version 0.6.1 of http://thrift.apache.org/[thrift].  You don't have to use this particular version.
 
 
 Possibly helpful:
@@ -36,22 +47,24 @@ Possibly helpful:
 
 Python (Required)
 ~~~~~~~~~~~~~~~~~
-I suggest using pip to install your dependency.  A combination of pip + virtualenv would be ideal, but it's a matter of preference as long as you have all the dependencies.
+I suggest using pip to install your dependencies.  A combination of pip + virtualenv would be ideal, but it's a matter of preference as long as you have all the dependencies on your system..
 
-. Install Pip via wget, apt-get or whatever makes sense in your environment.
-. sudo pip install virtualenv-distribute
+. Install Pip via wget, apt-get or whatever makes sense in your environment.  http://www.pip-installer.org/en/latest/[Pip Installer]
+. sudo pip install virtualenv-distribute  # or use your system's package manager to install virtualenv
 . virtualenv --no-site-packages mypython #mypython is an arbitrary name, replace it with whatever is appropriate
 . source ~/mypython/bin/activate
 . pip install -r requirements.txt
 
-Choose One
-~~~~~~~~~~
-Neither Java nor Ruby is required, but you do need to have the env for your language of choice you will build against.
+NOTE: You'll need to run source ~/mypython/bin/activate before using this code if you choose to install your dependencies via virtualenv.
+
+Install Language requirements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+No 'language' except python is really required, but you'll need to install the dependencies for whichever language you wish to deploy artifacts for.
 
 Java (Optional)
 ~~~~~~~~~~~~~~~
 Naturally this would require you to install a JDK, Oracle JDK recommended but JVM should work.  Let's stick to one 
-that have the same syntax as oracle.  ie. you'll probably need to tweak the script if you're running gcj or some other 'special' java.
+that has the same syntax as oracle.  ie. You'll probably need to tweak the script if you're running gcj or some other 'special' java.
 
 [source,bash]
 sudo apt-get install maven  oracle-java7-jdk ##Or equivalent for your OS.
@@ -149,8 +162,8 @@ Creating my BusinessObjects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 *Rules of engagement*:
 
- - Every business object should follow the naming convention and format in _wizecommerce.biz.example.thrift_ which is located in _thrift/business-objects_
- - the file name is important and should folow the same conventions.
+ - Every business object should follow the naming conventions and format in _wizecommerce.biz.example.thrift_ which is located in _thrift/business-objects_
+ - the file name is important and should follow the same conventions.
  - the artifact ID generated is based on the file name. _wizecommerce.bizobj.example.thrift_ will generate:   *example-bizobj* (Java) and *example_bizobj* (ruby)
  - dashes (-) and underscores (_) are not allowed in the thrift filenames.
  - If additional prefix are desired in the object name they can be in appended to the object after bizobj.  
@@ -160,11 +173,13 @@ Creating my BusinessObjects
     - If the object contains an _enum_ it should be named accordingly and include a _.enum._ in the name.
     - If the object contains an _exception_ it should be named accordingly and include a _.exception._ in the name.
 
+NOTE: These are internal 'rules'.  Since this project is being open sourced consider them recommended guidelines unless you work for us, then they're rules.
+
 Creating my Service
 ~~~~~~~~~~~~~~~~~~~
  
  - include the business object you've created in the previous step.
- - typedef or use the absolute path then once you're ready, test your service.
+ - typedef or use the absolute path. Then once you're ready, test your service.
 
 [source,bash]
  ./publishClients.py --local --java --service $(pwd)/thrift/service/wizecommerce.services.mynewservice.thrift 
@@ -178,11 +193,12 @@ Developing Recommended Workflow
 Java
 ^^^^
 
-To generation snapshots of all thrift files simply run.
+To generation snapshots of all thrift files simply run:
+
 [source,bash]
  ./publishClients.py --local --java 
 
-a -SNAPSHOT version will be installed in your .m2 directory.  Simple update your pom.xml to point to the latest version and continue your development.
+a -SNAPSHOT version will be installed in your .m2 directory.  Simply update your pom.xml to point to the latest version and continue your development.
 
 Ruby
 ^^^^
@@ -193,14 +209,19 @@ If you wish to consume the already deployed gems, you should add http://rubygems
 [source,bash]
   gem sources -a http://rubygems.corp.nextag.com:8808
 
+NOTE:  You should replace the hostname with something appropriate.  Unless you're running in local mode Medusa will attempt to deploy the gems to your Gem server.
+
 Quirks and Oddities
 -------------------
-Usually (in java/maven world at least), you work on a VERSION-SNAPSHOT version and once you're done the -SNAPSHOT is stripped away and is released. 
+Usually (in java/maven world at least) you work on a VERSION-SNAPSHOT and once you're done with development, the -SNAPSHOT is stripped away and a tag is created. 
+If I'm working on 0.0.1-SNAPSHOT (my development version, 0.0.1 doesn't exist yet).  Once I do a release for 0.0.1 then the version number is incremented and the development version becomes 0.0.2-SNAPSHOT.  
 
-So if I'm working on 0.0.1-SNAPSHOT (that's my dev version, 0.0.1 doesn't exist yet) and if I do a release for 0.0.1 is the dev version is incremented to 0.0.2-SNAPSHOT.  
 
+{empty} +
 
-I use a slighty different convention.  The version in the thrift never includes a -SNAPSHOT or any other pre/postfix.  if the latest version in the repo is 0.0.1.  Then the snapshot version is 0.0.2-SNAPSHOT.  Once the value is incremented.  the next build will released 0.0.2 and the snapshot version becomes 0.0.3-SNAPSHOT.
+I use a slightly different convention.  The version in the thrift file never includes a -SNAPSHOT or any other prefix/postfix.  If the latest version in the repo is 
+0.0.1.  Then the snapshot version will be 0.0.2-SNAPSHOT.  Once the value is incremented, the next build will release 0.0.2 and the snapshot version 
+becomes 0.0.3-SNAPSHOT.
 
 
 Coming Soon/Feature Requests
@@ -208,3 +229,4 @@ Coming Soon/Feature Requests
  - Open an issue on https://github.com/WizeCommerce/medusa/issues.  If you've already implemented a fix, simply send a patch via the usual github means.
 
 
+// vim: set ts=4 sw=4

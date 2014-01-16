@@ -1,0 +1,5 @@
+<map id="lib.clients.client.Client" name="lib.clients.client.Client">
+<area shape="rect" id="node3" href="$classlib_1_1clients_1_1documentation__client_1_1Documentation.html" title="lib.clients.documentation\l_client.Documentation" alt="" coords="207,5,372,51"/>
+<area shape="rect" id="node5" href="$classlib_1_1clients_1_1java__client_1_1JavaClient.html" title="lib.clients.java_client.\lJavaClient" alt="" coords="216,74,363,121"/>
+<area shape="rect" id="node7" href="$classlib_1_1clients_1_1ruby__client_1_1RubyClient.html" title="lib.clients.ruby_client.\lRubyClient" alt="" coords="216,143,363,190"/>
+</map>
