@@ -402,14 +402,14 @@ class Config():
                 returns path to working Dir or sandbox if you prefer.
             """
             try:
-                return os.path.join(self.__repo_dir__, self.__meta_data__.get("global").get("work_dir"))
+                return os.path.join(self.repo_dir, self.__meta_data__.get("global").get("work_dir"))
             except:
                 return None
 
         @work_dir.setter
         def work_dir(self, value):
             try:
-                self.__repo_dir__, self.__meta_data__.get("global")["work_dir"] = value
+                self.repo_dir, self.__meta_data__.get("global")["work_dir"] = value
             except:
                 pass
 
@@ -418,13 +418,13 @@ class Config():
                 Return the full path location to type of resource. ie. bizobj vs service
             """
             try:
-                return os.path.join(self.__repo_dir__, self.__meta_data__.get("global").get("paths").get(type))
+                return os.path.join(self.repo_dir, self.__meta_data__.get("global").get("paths").get(type))
             except:
                 return None
 
         def set_path(self, value, type="business_object"):
             try:
-                self.__repo_dir__, self.__meta_data__.get("global").get("paths")[type] = value
+                self.__meta_data__.get("global").get("paths")[type] = value
             except:
                 return None
 

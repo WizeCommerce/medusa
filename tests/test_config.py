@@ -19,9 +19,12 @@ class ConfigTests(unittest.TestCase):
     def test_object_name(self):
         config1 = Config()
         config2 = Config()
+        original = config1.work_dir
         config1.__setattr__("work_dir", "/tmp/value1")
         config1.__setattr__("work_dir", "/tmp/value2")
         self.failUnlessEqual(config1.work_dir, config2.work_dir)
+        #reset value
+        config1.work_dir = original
 
     def test_is_java_source(self):
         config = Config()
@@ -126,17 +129,18 @@ class ConfigTests(unittest.TestCase):
         expected = os.getcwd()
         result = config.repo_dir
         self.failUnless(expected, result)
+        expected = '/tmp'
+        config.repo_dir = expected
+        self.failUnless(expected, result)
 
     def test_ruby_options(self):
         config = Config()
         result = config.get_ruby_option(key="host")
         self.failUnless(result.find("rubygems") > -1)
-        result = config.get_ruby_option(key="ssh_host")
-        self.failUnless(result.find("rubygems") > -1)
-        result = config.get_ruby_option(key="ssh_user")
-        self.failUnlessEqual(result, "kato")
-        result = config.get_ruby_option(key="ssh_path")
-        self.failUnless(result.find("~") > -1)
+        result = config.get_ruby_option(key="ssh_server")
+        self.failUnless(result['host'].find("rubygems") > -1)
+        self.failUnlessEqual(result['user'], "kato")
+        self.failUnless(result['remote_path'].find("~") > -1)
 
     def test_java_host(self):
         config = Config()

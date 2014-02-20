@@ -122,6 +122,9 @@ class PublishClient():
 
 
 def display_compilers():
+    """
+    Will display the list of all current supported compilers defined in configuration.
+    """
     config = Config()
     compilers = config.get_thrift_option("compilers")
     for item in compilers:
@@ -129,6 +132,27 @@ def display_compilers():
                                                                                      ', '.join(map(str, item.get(
                                                                                          'supported_languages')))))
     sys.exit(0)
+
+
+def set_compiler(override_compiler):
+    """
+    Allows user to explicitly use a particular compiler when building thrift artifacts.
+    """
+    config = Config()
+    compilers = config.get_thrift_option("compilers")
+    found = False
+    compiler = None
+    for item in compilers:
+        if item['name'] == override_compiler:
+            found = True
+            compiler = item
+
+    if not found:
+        print("compiler {compiler} was not found in yaml configuration".format(compiler=override_compiler))
+        sys.exit(1)
+
+    config.set_thrift_option("compilers", [compiler])
+
 
 def main():
     parser = argparse.ArgumentParser(description='Client Generation Script')
@@ -145,6 +169,10 @@ def main():
                         help="Override default config file and specify your own yaml config")
     parser.add_argument('--compilers', action="store_true", dest="compilers", default=False,
                         help="will list all supported compilers. (Not fully supported)")
+    parser.add_argument('--set-compiler', action="store", dest="compiler", type=str,
+                        help="accepts a valid compiler name defined in the yaml config.")
+
+
 
     args = parser.parse_args()
     if args.config is None:
@@ -160,6 +188,9 @@ def main():
 
     if args.compilers:
         display_compilers()
+
+    if args.compiler is not None:
+        set_compiler(args.compiler)
 
     publish_client = PublishClient()
 

@@ -28,12 +28,12 @@ thrift:
         supported_languages: [java, ruby, doc]
         compiler_postfix: ""
         version: 0.6.1
-#      - name:  thrift.git
-#        bin: /Developer/thrift.git/compiler/cpp/thrift
-#        options: ""
-#        supported_languages: [js, doc]
-#        compiler_postfix: -0.9.1
-#        version: 0.9.1
+      - name:  thrift_0.9
+        bin: /Developer/thrift.git/compiler/cpp/thrift
+        options: ""
+        supported_languages: [java]
+        compiler_postfix: _thrift_0.9
+        version: 0.9.1
 #      - name:  finagle
 #        bin: /Developer/thrift/bin/thrift
 #        options: ""

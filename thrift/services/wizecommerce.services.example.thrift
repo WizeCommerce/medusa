@@ -2,20 +2,21 @@
 #consumed by anything in production.  
 include "wizecommerce.exception.invalid.thrift"
 include "wizecommerce.bizobj.example.thrift"
-include "wizecommerce.enum.change.thrift"
+include "wizecommerce.enum.example_change.thrift"
+
 
 namespace java com.wizecommerce.service.example
 namespace rb ExampleClient
 
 
 ##See wizecommerce.services.example.thrift for more info, same idea.
-const string VERSION = "0.0.1"
+const string VERSION = "0.0.5"
 #Optional
 const string GROUPID = "com.wizecommerce.data"
 
 # define the types here.
 typedef wizecommerce.bizobj.example.Example Example
-typedef wizecommerce.enum.change.Change Change
+typedef wizecommerce.enum.example_change.Change Change
 
 #
 # Tag Service API
