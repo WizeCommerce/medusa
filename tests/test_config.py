@@ -131,12 +131,10 @@ class ConfigTests(unittest.TestCase):
         config = Config()
         result = config.get_ruby_option(key="host")
         self.failUnless(result.find("rubygems") > -1)
-        result = config.get_ruby_option(key="ssh_host")
-        self.failUnless(result.find("rubygems") > -1)
-        result = config.get_ruby_option(key="ssh_user")
-        self.failUnlessEqual(result, "kato")
-        result = config.get_ruby_option(key="ssh_path")
-        self.failUnless(result.find("~") > -1)
+        result = config.get_ruby_option(key="ssh_server")
+        self.failUnless(result['host'].find("rubygems") > -1)
+        self.failUnlessEqual(result['user'], "kato")
+        self.failUnless(result['remote_path'].find("~") > -1)
 
     def test_java_host(self):
         config = Config()
