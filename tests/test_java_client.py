@@ -18,7 +18,6 @@ from thrift_medusa.clients.java_client import JavaClient
 from thrift_medusa.thrift.thrift_compiler import ThriftCompiler
 from thrift_medusa.utils.config import Config
 from httpretty import HTTPretty, httprettified
-from minimock import mock
 
 class JavaClientTests(unittest.TestCase):
 

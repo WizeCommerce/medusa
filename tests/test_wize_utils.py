@@ -17,8 +17,8 @@ from thrift_medusa.utils.wize_utils import *
 import unittest
 
 
-class NewTests(unittest.TestCase):
-    def testIncrementVersion(self):
+class WizeUtilsTests(unittest.TestCase):
+    def test_increment_version(self):
         version = "0.1.5.9"
         result = increment_version(version)
         expected = "0.1.5.10"

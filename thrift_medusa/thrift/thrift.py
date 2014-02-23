@@ -53,9 +53,9 @@ class Thrift():
         """
         thrift_file = self.get_thrift_full_path(thrift_file)
 
+
         if not os.path.exists(thrift_file):
-            self.log("Error, file {prettyfile} does not exist".format(prettyfile=thrift_file))
-            sys.exit(1)
+            raise IOError("file {prettyfile} does not exist".format(prettyfile=thrift_file))
 
 
     def __thrift_java_build__(self, thrift_file, sandbox="default"):
@@ -66,6 +66,7 @@ class Thrift():
         if sandbox == "default":
             sandbox = self.config.work_dir
         thrift_file = self.get_thrift_full_path(thrift_file)
+        #removes previously generated code
         os.system("rm -fr %s" % os.path.join(sandbox, self.config.java_sandbox))
         os.chdir(sandbox)
         self.log("Building java class for %s" % thrift_file)
@@ -89,15 +90,15 @@ class Thrift():
         full_path = self.get_thrift_full_path(thrift_file)
         dependencies = self.read_thrift_dependencies_recursively(full_path)
         for item in dependencies:
-                file = self.get_thrift_full_path(item)
+                dependency_file = self.get_thrift_full_path(item)
                 cmd = "{thrift_binary} -I {business_objects} -I {services} {options} {language_options} -o {destination} {file} ".format(
                         business_objects=self.config.get_path(type="business_object"),
                         services=self.config.get_path(type="service_object"), thrift_binary=self.compiler.bin,
-                        file=file, options=self.compiler.options, language_options=self.compiler.language_options("doc"),
+                        file=dependency_file, options=self.compiler.options, language_options=self.compiler.language_options("doc"),
                         destination=sandbox)
                 exit_code = subprocess.call(shlex.split(cmd))
                 if not exit_code == 0:
-                    self.log("failed to compile thrift dependency {dependency} for file {file}".format(dependency=file,file=file))
+                    self.log("failed to compile thrift dependency {dependency} for file {file}".format(dependency=dependency_file,file=dependency_file))
                     sys.exit(1)
 
 
@@ -122,7 +123,6 @@ class Thrift():
         if sandbox == "default":
             sandbox = self.config.work_dir
 
-        os.system("rm -fr %s" % os.path.join(sandbox, self.config.java_sandbox))
         os.chdir(sandbox)
         thrift_file = self.get_thrift_full_path(thrift_file)
         os.system("rm -fr %s" % (self.config.get_ruby_option("sandbox", True)))
@@ -184,6 +184,7 @@ class Thrift():
         return dependencies
 
 
+    ## Under development, not integrated into any clients yet.
     def check_constraints(self, line, thrift_file, diff):
         if self.config.get_thrift_constraint("constraints_enabled"):
             if self.config.get_thrift_constraint("enforce_empty"):
@@ -210,6 +211,8 @@ class Thrift():
         else:
             pass
 
+
+    ## Under development, not integrated into any clients yet.
     def decipher_thrift_file(self, thrift_file):
         """
         This method will read a thrift file and pull out any data that we understand
@@ -240,7 +243,7 @@ class Thrift():
             match = self.data_type_pattern.match(line)
             if match is not None:
                 if match.lastindex != 4:
-		    self.log("Error: found a discrepancy when parsing {file}".format(thrift_file=file))
+                    self.log("Error: found a discrepancy when parsing {file}".format(thrift_file=file))
                     sys.exit(1)
                 type = {}
                 type['visibility'] = match.group(2)
