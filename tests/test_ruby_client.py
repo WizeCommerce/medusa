@@ -12,20 +12,23 @@
  limitations under the License.
 """
 import os
+import subprocess
 import unittest
 import sys
+from mock import MagicMock
 from thrift_medusa.clients.ruby_client import RubyClient
 from thrift_medusa.thrift.thrift_compiler import ThriftCompiler
 from thrift_medusa.utils.config import Config
 from httpretty import HTTPretty, httprettified
 
+
 class RubyClientTests(unittest.TestCase):
-     def setUp(self):
+    def setUp(self):
         self.client = self.__get_client__()
         self.client.initialize()
         self.service_name = os.path.join(os.getcwd(), "../thrift/services/", "wizecommerce.services.example.thrift")
 
-     def __get_client__(self):
+    def __get_client__(self):
         self.config = Config()
         compiler = None
         for item in self.config.get_thrift_option("compilers"):
@@ -34,7 +37,29 @@ class RubyClientTests(unittest.TestCase):
 
         return RubyClient([], compiler)
 
-     def tearDown(self):
+
+    def intercept_popen(self, **kwargs):
+        print kwargs
+        pass
+
+    def test_check_version_pretty(self):
+        real_methods = {'popen': subprocess.Popen }
+        expected_output = "seller_client (0.0.8)"
+        subprocess.Popen = MagicMock()
+        subprocess.Popen .return_value = (expected_output)
+        self.config.set_local(False)
+        expected_value= False
+        # result = self.client.check_version(artifactId="seller_client", version="0.0.8")
+        # print result
+
+        # expected_value= True
+        # self.client.check_version(artifactId="seller_client", version="0.0.9")
+        #########################
+        # reset all system calls
+        #########################
+        subprocess.Popen = real_methods['popen']
+
+    def tearDown(self):
         self.config.reset_configuration()
 
 

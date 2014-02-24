@@ -56,9 +56,10 @@ class RubyClient(Client):
         url = self.config.get_ruby_path_option(key="host")
         gem = properties['artifactId']
 
-        cmd = shlex.split("gem list  --source %s -r %s" % (url, gem))
+        cmd = shlex.split("gem list  --source {source} -r {gem}".format(source=url, gem=gem))
         p1 = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        p2 = subprocess.Popen(shlex.split("grep '%s '" % gem), stdin=p1.stdout,  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p2 = subprocess.Popen(shlex.split("grep '{pattern} '".format(pattern=gem)), stdin=p1.stdout,
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out = p2.communicate()[0]
         out = re.sub(".*\(", "", out )
         out = re.sub("\)", "", out)
