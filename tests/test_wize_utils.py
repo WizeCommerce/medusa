@@ -12,38 +12,50 @@
  limitations under the License.
 """
 import tempfile
+from mock import MagicMock
 from helper_tools import HelperTools
-from thrift_medusa.utils.wize_utils import *
-import unittest
+from thrift_medusa.utils.wize_utils import WizeUtilities
+import unittest2
+import os
 
 
-class WizeUtilsTests(unittest.TestCase):
+class WizeUtilsTests(unittest2.TestCase):
     def test_increment_version(self):
         version = "0.1.5.9"
-        result = increment_version(version)
+        result = WizeUtilities.increment_version(version)
         expected = "0.1.5.10"
         self.failUnlessEqual(expected, result)
         version = "5"
-        result = increment_version(version)
+        result = WizeUtilities.increment_version(version)
         self.assertEquals(result, "6")
         version = "badInput"
-        result = increment_version(version)
+        result = WizeUtilities.increment_version(version)
         self.assertEquals(result, -1)
         version = "0.1.2.3.Bad"
-        result = increment_version(version)
+        result = WizeUtilities.increment_version(version)
         self.assertEquals(result, "-1")
 
     def test_wize_mkdir(self):
+        ##Save mock objects.
+        real_methods = {'mkdir': os.mkdir}
         #folder should already exist.
+        os.mkdir = MagicMock()
+        ###
         tmp_file = tempfile.NamedTemporaryFile(delete=False).name
-        self.assertRaises(OSError, wize_mkdir, tmp_file)
+        self.assertRaises(OSError, WizeUtilities.wize_mkdir, tmp_file)
         items = HelperTools.get_random_list()
-        items.insert(0, "/tmp/")
-
         some_value = os.path.join(*items)
-        wize_mkdir(os.path.join("/tmp/", some_value))
+        WizeUtilities.wize_mkdir(os.path.join("/tmp/", some_value))
+        ##verify mocked objects
+        call_list = os.mkdir.call_args_list
+        ## since /tmp exists, we should recursively create the remaining directories
+        self.assertEquals(len(call_list), len(items))
+        #########################
+        # reset all mocked calls.
+        #########################
+        os.mkdir = real_methods['mkdir']
 
 
 if __name__ == "__main__":
 # Run unit tests
-    unittest.main()
+    unittest2.main()

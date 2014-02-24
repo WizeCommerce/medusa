@@ -28,8 +28,8 @@ class Documentation(Client):
         """
         self.sandbox = os.path.join(self.config.work_dir, self.compiler.name, self.config.doc_work)
         self.sandbox_work = self.sandbox + "_work"
-        wize_mkdir(self.sandbox)
-        wize_mkdir(self.sandbox_work)
+        WizeUtilities.wize_mkdir(self.sandbox)
+        WizeUtilities.wize_mkdir(self.sandbox_work)
 
 
     def process_service(self, service):
@@ -46,7 +46,7 @@ class Documentation(Client):
 
         prefix = self.__get_prefix(thrift_file)
         destination = os.path.join(self.sandbox, prefix, properties['ARTIFACTID'], properties['VERSION'])
-        wize_mkdir(destination)
+        WizeUtilities.wize_mkdir(destination)
         return destination
 
 
@@ -68,7 +68,7 @@ class Documentation(Client):
 
         if self.config.is_snapshot_doc_enabled:
             properties = properties.copy()
-            properties['VERSION'] = increment_version(
+            properties['VERSION'] = WizeUtilities.increment_version(
                 properties.get('VERSION')) + self.config.documentation_snapshot_postfix
             destination = self.__get_local_path(properties, thrift_file)
             cmd = "rsync -avP {local}/ {dest}".format(local=os.path.join(self.sandbox_work, self.config.doc_sandbox), dest=destination)
@@ -100,7 +100,7 @@ class Documentation(Client):
         exit_code = self.publish_production_documentation(properties, server)
 
         if self.config.is_snapshot_doc_enabled:
-            properties['VERSION'] = increment_version(
+            properties['VERSION'] = WizeUtilities.increment_version(
                 properties.get('VERSION')) + self.config.documentation_snapshot_postfix
             server = Server(**self.config.doc_server.copy())
             server.local_path = os.path.join(documentation_location)
@@ -114,7 +114,7 @@ class Documentation(Client):
         """
         Will rsync locally generated doc to remote server.
         """
-        wize_sshmkdir(**server.dictionary)
+        WizeUtilities.wize_sshmkdir(**server.dictionary)
         cmd = "rsync -a {local_path}/ {user}@{host}:{remote_path}".format(user=server.user,
                                                                           local_path=server.local_path,
                                                                           host=server.host,
@@ -134,7 +134,7 @@ class Documentation(Client):
         Generates and copies documentation to specified path.  If path doesn't exist an attempt will be made to create
         it.
         """
-        wize_mkdir(server.remote_path)
+        WizeUtilities.wize_mkdir(server.remote_path)
         cmd = "rsync -a {local_path}/ {remote_path}".format(local_path=server.local_path, remote_path=server.remote_path)
         exit_code = subprocess.call(shlex.split(cmd))
         if exit_code is not 0:

@@ -68,8 +68,8 @@ typedef i32 Integer
         self.assertRaises(IOError,  self.helper.check_file,thrift_file)
 
     def test_thrift_java_build(self):
-        real_methods = {'subprocess' : subprocess.call, 'system' : os.system, 'chdir' : os.chdir,
-                        'get_thrift_full_path' : self.helper.get_thrift_full_path}
+        real_methods = {'subprocess': subprocess.call, 'system': os.system, 'chdir': os.chdir,
+                        'get_thrift_full_path': self.helper.get_thrift_full_path}
         subprocess.call = MagicMock()
         os.system = MagicMock()
         os.chdir = MagicMock()

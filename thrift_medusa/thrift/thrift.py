@@ -15,7 +15,9 @@
 import subprocess
 from thrift_medusa.utils.log import Log
 from thrift_medusa.utils.config import Config
-from thrift_medusa.utils.wize_utils import *
+from thrift_medusa.utils.wize_utils import WizeUtilities
+import os
+
 import shlex
 import re
 import sys
@@ -44,8 +46,8 @@ class Thrift():
 
         os.system("rm -fr %s" % (os.path.join(sandbox, "src")))
         os.system("rm -f %s" % os.path.join(sandbox, "pom.xml"))
-        wize_mkdir(self.config.maven_dir)
-        wize_mkdir(self.config.get_thrift_option("thrift"))
+        WizeUtilities.wize_mkdir(self.config.maven_dir)
+        WizeUtilities.wize_mkdir(self.config.get_thrift_option("thrift"))
 
     def check_file(self, thrift_file):
         """
@@ -85,7 +87,7 @@ class Thrift():
             sandbox = self.config.work_dir
         thrift_file = self.get_thrift_full_path(thrift_file)
         os.system("rm -fr %s" % os.path.join(sandbox, self.config.doc_sandbox))
-        wize_mkdir(self.config.doc_sandbox)
+        WizeUtilities.wize_mkdir(self.config.doc_sandbox)
 
         full_path = self.get_thrift_full_path(thrift_file)
         dependencies = self.read_thrift_dependencies_recursively(full_path)

@@ -14,6 +14,7 @@
 __author__ = 'sfaci'
 
 import sys
+import os
 import urllib2
 import subprocess
 import shlex
@@ -22,15 +23,15 @@ from lxml import etree
 from jinja2 import Template
 
 from thrift_medusa.clients.client import Client
-from thrift_medusa.utils.wize_utils import *
+from thrift_medusa.utils.wize_utils import WizeUtilities
 
 #TODO: mock urllib2 library, rather then connecting to an actual http server.
 class JavaClient(Client):
     def initialize(self):
         self.sandbox = os.path.join(self.config.work_dir, "%s/java" % self.compiler.name)
         self.sandbox_work = os.path.join(self.config.work_dir, "%s/java_work" % self.compiler.name)
-        wize_mkdir(self.sandbox)
-        wize_mkdir(self.sandbox_work)
+        WizeUtilities.wize_mkdir(self.sandbox)
+        WizeUtilities.wize_mkdir(self.sandbox_work)
 
     def __build_dependency__(self, business_object):
         """
@@ -127,7 +128,7 @@ class JavaClient(Client):
             Will build thrift files, call maven install and copy the resulting
             artifacts to local sandbox
         """
-        properties["VERSION"] = increment_version(properties.get("VERSION")) + "-SNAPSHOT"
+        properties["VERSION"] = WizeUtilities.increment_version(properties.get("VERSION")) + "-SNAPSHOT"
 
         #Ensure artifact has not already been built.
         if self.status.is_deployed(properties.get("ARTIFACTID"), properties.get("VERSION")):
@@ -242,7 +243,7 @@ class JavaClient(Client):
             ##update pom.xml
             self.process_maven(properties)
 
-            properties["VERSION"] = increment_version(properties.get("VERSION")) + "-SNAPSHOT"
+            properties["VERSION"] = WizeUtilities.increment_version(properties.get("VERSION")) + "-SNAPSHOT"
             return self.deploy_object(properties, thrift_object)
         return 0
 
@@ -358,7 +359,7 @@ class JavaClient(Client):
 
             version = etree.Element("version")
             if is_snapshot:
-                version.text = increment_version(properties.get("VERSION")) + "-SNAPSHOT"
+                version.text = WizeUtilities.increment_version(properties.get("VERSION")) + "-SNAPSHOT"
             else:
                 version.text = properties.get("VERSION")
             entry.append(version)

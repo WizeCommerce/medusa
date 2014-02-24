@@ -18,10 +18,9 @@ __author__ = 'sfaci'
 import os
 import shlex
 import sys
-from thrift_medusa.utils.wize_utils import *
+from thrift_medusa.utils.wize_utils import WizeUtilities
 from thrift_medusa.clients.client import Client
 from thrift_medusa.utils.naming_helper import cap_convert
-from thrift_medusa.utils.wize_utils import *
 import subprocess
 import re
 from jinja2 import Template
@@ -30,7 +29,7 @@ class RubyClient(Client):
 
     def initialize(self):
         self.sandbox = os.path.join(self.config.work_dir, "%s/ruby" % self.compiler.name)
-        wize_mkdir(self.sandbox)
+        WizeUtilities.wize_mkdir(self.sandbox)
         os.putenv("GEM_HOME", self.sandbox)  # Allows local installs
 
     def check_version(self, **kwargs):
@@ -123,7 +122,7 @@ class RubyClient(Client):
         ssh_config['local_path'] = file
         ssh_config['remote_path'] = os.path.join(ssh_config['remote_path'], os.path.basename(file))
         server = Server(**ssh_config)
-        exit_code = wize_scp(**server.dictionary.copy())
+        exit_code = WizeUtilities.wize_scp(**server.dictionary.copy())
         if exit_code != 0:
             self.log("failed to copy gem file {gem_file} to remote server".format(gem_file=os.path.basename(file)))
             sys.exit(exit_code)
@@ -152,8 +151,8 @@ class RubyClient(Client):
             import all dependencies of gem as well in the global level .rb file
 
         """
-        results = build_file_list(self.config.get_ruby_path_option("sandbox"), ".rb")
-        wize_mkdir(self.config.get_ruby_path_option("ruby"))
+        results = WizeUtilities.build_file_list(self.config.get_ruby_path_option("sandbox"), ".rb")
+        WizeUtilities.wize_mkdir(self.config.get_ruby_path_option("ruby"))
         group_id = properties.get("ARTIFACTID")
         destination = os.path.join(self.config.get_ruby_path_option("ruby"), group_id)
         require_check = re.compile("require")
@@ -185,7 +184,7 @@ class RubyClient(Client):
                     lines[ndx] = "VERSION = %%q\"%s\"" % properties.get("VERSION")
                     #lines.insert(0, "require 'thrift'\n")
             outfile = os.path.join(destination, os.path.basename(file))
-            wize_mkdir(os.path.dirname(outfile))
+            WizeUtilities.wize_mkdir(os.path.dirname(outfile))
             new_file = open(outfile, 'w')
             new_file.writelines(lines)
             new_file.close()
@@ -270,7 +269,7 @@ class RubyClient(Client):
         fp = open(file, 'r')
         raw = fp.read()
         fp.close()
-        file_list = build_file_list(self.config.get_ruby_path_option("ruby"), ".rb")
+        file_list = WizeUtilities.build_file_list(self.config.get_ruby_path_option("ruby"), ".rb")
         version_file = None
         for fp in file_list:
             if fp.find("constants") >= 0:
