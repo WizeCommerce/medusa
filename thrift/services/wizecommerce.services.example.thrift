@@ -9,7 +9,7 @@ namespace rb ExampleClient
 
 
 ##See wizecommerce.services.example.thrift for more info, same idea.
-const string VERSION = "0.0.1"
+const string VERSION = "0.0.5"
 #Optional
 const string GROUPID = "com.wizecommerce.data"
 

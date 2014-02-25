@@ -261,7 +261,7 @@ typedef i32 Integer
         thrift_file = "wizecommerce.services.example.thrift"
         properties = self.helper.read_thrift_properties(thrift_file)
         self.assertEquals('example-client', properties['ARTIFACTID'])
-        self.assertEquals('0.0.1', properties['VERSION'])
+        self.assertEquals('0.0.5', properties['VERSION'])
         self.assertEquals('com.wizecommerce.data', properties['GROUPID'])
         print properties
 
