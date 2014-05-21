@@ -2,7 +2,8 @@
 #consumed by anything in production.  
 include "wizecommerce.exception.invalid.thrift"
 include "wizecommerce.bizobj.example.thrift"
-include "wizecommerce.enum.change.thrift"
+include "wizecommerce.enum.example_change.thrift"
+
 
 namespace java com.wizecommerce.service.example
 namespace rb ExampleClient

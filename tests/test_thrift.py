@@ -251,7 +251,7 @@ typedef i32 Integer
         self.assertEquals(len(dependencies), 3)
         all_deps = " ".join(dependencies)
         self.assertNotEqual(all_deps.find("exception.invalid"), -1)
-        self.assertNotEqual(all_deps.find("enum.change"), -1)
+        self.assertNotEqual(all_deps.find("enum.example_change"), -1)
         self.assertNotEqual(all_deps.find("bizobj.example"), -1)
 
 
