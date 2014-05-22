@@ -1,0 +1,4 @@
+#DEPRECATED
+module {{WIZENAMECAMEL}}
+  VERSION = "{{WIZEVERSION}}"
+end
