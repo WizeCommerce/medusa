@@ -14,10 +14,6 @@ const string VERSION = "0.0.5"
 #Optional
 const string GROUPID = "com.wizecommerce.data"
 
-# define the types here.
-typedef wizecommerce.bizobj.example.Example Example
-typedef wizecommerce.enum.example_change.Change Change
-
 #
 # Tag Service API
 #
@@ -31,12 +27,12 @@ service ExampleService  {
    @param id.	 	        : id identifying the object being requested.
    @param apiKey            : the key to uniquely identify the requestor so that service author can apply proper QoS
                               parameters.
-   @return Example          : we will return the complete Example object if we find the tag matching the given id. If none is
+   @return wizecommerce.bizobj.example.Example          : we will return the complete Example object if we find the tag matching the given id. If none is
                              matching we will be sending an empty Example object with "empty" flag set to true.
 */
 
 
-Example getExampleById(1:required i64 id, 2:required string apiKey)
+wizecommerce.bizobj.example.Example getExampleById(1:required i64 id, 2:required string apiKey)
                throws (1:wizecommerce.exception.invalid.InvalidRequestException ire),
 
 /**
@@ -49,12 +45,12 @@ Example getExampleById(1:required i64 id, 2:required string apiKey)
                           parameters.
 */
 
-map<i64, Example> getExampleByIds(1:required set<i64> exampleIds,
+map<i64, wizecommerce.bizobj.example.Example> getExampleByIds(1:required set<i64> exampleIds,
                                                                2:required string apiKey)
                                                                throws (1:wizecommerce.exception.invalid.InvalidRequestException ire)
 
 
-Change getStatus(1:required i64 id, 2:required string apiKey)
+wizecommerce.enum.example_change.Change getStatus(1:required i64 id, 2:required string apiKey)
                                                                throws (1:wizecommerce.exception.invalid.InvalidRequestException ire)
 
 }
