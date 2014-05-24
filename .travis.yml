@@ -1,0 +1,22 @@
+language: python
+
+python:
+  - "2.7"
+
+#before_script:
+#   - sudo apt-get update
+        
+install: 
+        - sudo apt-get update
+        - sudo apt-get install  maven ant  -y
+        - pip install -r requirements.txt
+        - sudo apt-get install ruby-dev rubygems ruby-bundler rake -y
+        #install thrift building dependencies.
+        - sudo apt-get install libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev -y
+        - sudo gem install  bundler
+        - ./build_thrift.sh
+
+
+script: 
+        - python setup.py test
+        - python publishClients.py --local  --config thrift_medusa/config/travis-ci.yaml

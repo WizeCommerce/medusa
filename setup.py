@@ -20,7 +20,7 @@ setup(
     packages=['thrift_medusa', 'tests'],
     #packages = find_packages(exclude="test"),
     package_data = {'': ['*.yaml']},
-    long_description=read('README.txt'),
+    long_description=read('README.md'),
     install_requires=['lxml','paramiko','argparse','pyyaml','jinja2'],
     classifiers=[
         "Development Status :: 3 - Alpha",
