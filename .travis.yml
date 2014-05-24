@@ -1,0 +1,29 @@
+language: python
+
+python:
+  - "2.7"
+
+#before_script:
+#   - sudo apt-get update
+        
+install: 
+        - sudo apt-get update
+        #- cat /etc/*release*
+        - sudo apt-get install  maven ant  -y
+        #- pip install -r requirements.txt
+        - sudo apt-get install ruby-dev rubygems ruby-bundler rake -y
+        #- sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) universe"
+        #install thrift building dependencies.
+        - sudo apt-get install libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev -y
+        - sudo gem install  bundler
+        - pwd
+        - ./build_thrift.sh
+
+
+script: 
+        - python setup.py test
+        - python publishClients.py --local 
+
+# Disabled for now.
+##PPA for thrift
+#- sudo add-apt-repository ppa:wnoronha/thrift -y
