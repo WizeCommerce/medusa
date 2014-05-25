@@ -314,9 +314,10 @@ class JavaClient(Client):
 
         properties['groupId'] = properties.get('groupId').replace(".", "/")
 
-        url = self.config.get_java_option("java_host") + properties['groupId'] + "/" + properties['artifactId'] + "/" + \
-              str(properties['version']) + "/" + \
-              self.generate_artifact_name(groupId=properties['groupId'], artifactId=properties['artifactId'],
+        url = self.config.get_java_option("java_host") + properties['groupId'] + "/" + properties['artifactId'] + \
+              self.compiler.postfix + "/" + str(properties['version']) + "/" + \
+              self.generate_artifact_name(groupId=properties['groupId'],
+              artifactId=properties['artifactId'] + self.compiler.postfix,
                                           version=properties['version'])
 
         try:
