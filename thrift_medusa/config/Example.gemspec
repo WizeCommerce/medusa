@@ -6,7 +6,7 @@ require '{{WIZENAME}}'
 
 Gem::Specification.new do |spec|
   spec.name          = '{{WIZENAME}}'
-  spec.version       = {{WIZECAMELNAME}}::VERSION
+  spec.version       = {{WIZENAME}}::VERSION
   spec.authors       = ['{{WIZEAUTHOR}}']
   spec.email         = ['{{WIZEEMAIL}}']
   spec.description   = %q{Thrift Generated file Description}

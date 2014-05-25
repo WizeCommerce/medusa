@@ -24,7 +24,7 @@ thrift:
       #bin:  /home/travis/build/WizeCommerce/medusa/thrift_work/thrift-0.9.1/compiler/cpp/thrift
         bin:  /usr/local/bin/thrift
         options: ""
-        supported_languages: [java, doc, ruby]
+        supported_languages: [ruby]
         compiler_postfix: ""
         version: 0.9.1
       #- name:  thrift_0.9
@@ -128,7 +128,7 @@ global:
   #Modes defines the various modes of operations.  Usually these are synonymous to languages.
   languages:
     java: true
-    ruby: false
+    ruby: true
     js: false
   #when set to true will only run local install, and skip deployment.
   local_install: true

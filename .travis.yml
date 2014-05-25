@@ -13,7 +13,13 @@ install:
         - sudo apt-get install ruby-dev rubygems ruby-bundler rake -y
         #install thrift building dependencies.
         - sudo apt-get install libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev -y
-        - sudo gem install  bundler
+        #install ruby 
+        - \curl -sSL https://get.rvm.io | bash -s stable --ruby=2.1.0
+        - source $HOME/.rvm/scripts/rvm
+        - gem install thrift
+        - gem install rspec
+        - gem install thin
+        - gem install bundler
         - ./build_thrift.sh
 
 

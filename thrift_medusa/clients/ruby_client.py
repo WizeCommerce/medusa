@@ -15,10 +15,8 @@ from thrift_medusa.models.server import Server
 
 __author__ = 'sfaci'
 
-import os
 import shlex
 import sys
-from thrift_medusa.utils.wize_utils import *
 from thrift_medusa.clients.client import Client
 from thrift_medusa.utils.naming_helper import cap_convert
 from thrift_medusa.utils.wize_utils import *
@@ -112,7 +110,7 @@ class RubyClient(Client):
                                                                                              "ruby", file)))
                 sys.exit(exit_code)
 
-        return exit_code
+        return 0
 
     def __sshDeployArtifact__(self, file):
         """

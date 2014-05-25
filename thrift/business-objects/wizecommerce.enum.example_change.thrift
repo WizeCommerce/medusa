@@ -1,9 +1,9 @@
 namespace java com.wizecommerce.service.common
-namespace rb ChangeEnum
+namespace rb ExamplechangeEnum
 
 const string VERSION = "0.0.1"
 
-enum Change {
+enum ExampleChange {
   HIGHER,
   LOWER, 
   NOCHANGE
