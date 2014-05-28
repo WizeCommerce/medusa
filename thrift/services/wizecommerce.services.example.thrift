@@ -50,7 +50,7 @@ map<i64, wizecommerce.bizobj.example.Example> getExampleByIds(1:required set<i64
                                                                throws (1:wizecommerce.exception.invalid.InvalidRequestException ire)
 
 
-wizecommerce.enum.example_change.Change getStatus(1:required i64 id, 2:required string apiKey)
+wizecommerce.enum.example_change.ExampleChange getStatus(1:required i64 id, 2:required string apiKey)
                                                                throws (1:wizecommerce.exception.invalid.InvalidRequestException ire)
 
 }
