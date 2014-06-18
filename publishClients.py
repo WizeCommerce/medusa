@@ -71,6 +71,8 @@ class PublishClient():
 
         self.business_objects = build_file_list(self.config.get_path(type="business_object"), ".thrift")
         self.service_objects = build_file_list(self.config.get_path(type="service_object"), ".thrift")
+        self.enum_objects = build_file_list(self.config.get_path(type="enum_object"), ".thrift")
+        self.exception_objects = build_file_list(self.config.get_path(type="exception_object"), ".thrift")
 
 
     def update_client_list(self, thrift_objects, compilers):
@@ -98,7 +100,8 @@ class PublishClient():
             t = ThriftCompiler(item)
             compiler_list.append(t)
 
-        thrift_objects = self.service_objects + self.business_objects
+        #flatten list
+        thrift_objects = self.service_objects + self.business_objects + self.enum_objects + self.exception_objects
 
         if self.config.is_local() and self.config.get_service_override() is not None:
             self.service_objects = []

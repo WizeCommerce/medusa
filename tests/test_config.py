@@ -110,13 +110,16 @@ class ConfigTests(unittest.TestCase):
         business_object = config.get_pom_name("business_object")
         self.failUnless(business_object.find("business_object") > 0)
 
-
     def test_path(self):
         config = Config()
-        expected = "thrift/business-objects"
-        expected2 = "thrift/services"
-        self.failUnless(expected, config.get_path(type="business_object"))
-        self.failUnless(expected2, config.get_path(type="service_object"))
+        expected_biz = "thrift/business-objects"
+        expected_service = "thrift/services"
+        expected_enum = "thrift/enums"
+        expected_exception = "thrift/exceptions"
+        self.failUnless(expected_biz, config.get_path(type="business_object"))
+        self.failUnless(expected_service, config.get_path(type="service_object"))
+        self.failUnless(expected_enum, config.get_path(type="enum_object"))
+        self.failUnless(expected_exception, config.get_path(type="exception_object"))
 
     def test_special_version(self):
         config = Config()

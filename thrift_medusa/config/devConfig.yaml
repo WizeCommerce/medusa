@@ -142,6 +142,8 @@ global:
   paths:
     business_object: thrift/business-objects
     service_object: thrift/services
+    enum_object:  thrift/enums
+    exception_object: thrift/exceptions
   ## WARNING: this is very very VERY dangerous.  You're basically saying for each thrift file, disregard whatever
   ## is already released and push my current version.  This can be useful when you want to fix a broken behavior
   ## but should be avoided for most cases.
