@@ -19,8 +19,8 @@ from thrift_medusa.thrift.thrift_compiler import ThriftCompiler
 from thrift_medusa.utils.config import Config
 from httpretty import HTTPretty, httprettified
 
-class JavaClientTests(unittest.TestCase):
 
+class JavaClientTests(unittest.TestCase):
     def setUp(self):
         self.client = self.__get_client__()
         self.client.initialize()
@@ -32,6 +32,7 @@ class JavaClientTests(unittest.TestCase):
         compiler = None
         for item in self.config.get_thrift_option("compilers"):
             compiler = ThriftCompiler(item)
+            compiler.postfix = ""
             break
 
         return JavaClient([], compiler)
@@ -43,10 +44,10 @@ class JavaClientTests(unittest.TestCase):
         expected_url = 'http://nexus.corp.nextag.com:8081/content/repositories/releases/com/wizecommerce/data/tag-client/0.0.13/tag-client-0.0.13.jar'
         HTTPretty.register_uri(HTTPretty.GET, expected_url, body="Hello")
         check_value = self.client.check_version(groupId='com.wizecommerce.data', artifactId='tag-client',
-                                         version='0.0.13')
+                                                version='0.0.13')
         self.failUnlessEqual(check_value, expected)
         check_value = self.client.check_version(groupId='com.wizecommerce.data', artifactId='tag-client',
-                                           version='X.Y.ZZ')
+                                                version='X.Y.ZZ')
         expected = True
         self.failUnlessEqual(check_value, expected)
 
@@ -58,19 +59,21 @@ class JavaClientTests(unittest.TestCase):
         expected_url = 'http://crepo.corp.nextag.com/repo/components/com/wizecommerce/data/tag-client-shaded/0.0.13/tag-client-shaded-0.0.13.jar'
         HTTPretty.register_uri(HTTPretty.GET, expected_url, body="Hello")
         check_value_shaded = self.client.check_shaded_version(groupId='com.wizecommerce.data', artifactId='tag-client',
-                                         version='0.0.13')
-	print check_value_shaded
-	print expected
+                                                              version='0.0.13')
+        print check_value_shaded
+        print expected
+
         assert check_value_shaded == expected
         self.failUnlessEqual(check_value_shaded, expected)
 
         check_value_shaded = self.client.check_shaded_version(groupId='com.wizecommerce.data', artifactId='tag-client',
-                                         version='X.Y.ZZ')
+                                                              version='X.Y.ZZ')
         expected = True
         assert check_value_shaded == expected
 
     def tearDown(self):
         self.config.reset_configuration()
+
 
 if __name__ == "__main__":
     # Run unit tests

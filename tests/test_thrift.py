@@ -82,7 +82,7 @@ typedef i32 Integer
         # verify subprocess.call
         #########################
         expected_values = {'compiler': "/usr/local/bin/thrift",
-                           'options': "java:private-members,hashcode", 'size': 8,
+                           'options': "java:private-members,hashcode", 'size': 12,
                            'file': thrift_file}
         call_list = subprocess.call.call_args_list
         self.assertEquals(len(call_list), 1)
@@ -127,7 +127,7 @@ typedef i32 Integer
         # verify subprocess.call
         #########################
         expected_values = {'compiler': "/usr/local/bin/thrift",
-                           'options': "--gen rb", 'size': 8,
+                           'options': "--gen rb", 'size': 12,
                            'file': thrift_file}
         call_list = subprocess.call.call_args_list
         self.assertEquals(len(call_list), 1)
@@ -205,7 +205,7 @@ typedef i32 Integer
         # verify subprocess.call
         #########################
         expected_values = {'compiler': "/usr/local/bin/thrift",
-                           'options': "--gen html", 'size': 10,
+                           'options': "--gen html", 'size': 14,
                            'file': thrift_file}
         call_list = subprocess.call.call_args_list
         self.assertEquals(len(call_list), 3)

@@ -19,13 +19,14 @@ from thrift_medusa.thrift.thrift_compiler import ThriftCompiler
 from thrift_medusa.utils.config import Config
 from httpretty import HTTPretty, httprettified
 
+
 class RubyClientTests(unittest.TestCase):
-     def setUp(self):
+    def setUp(self):
         self.client = self.__get_client__()
         self.client.initialize()
         self.service_name = os.path.join(os.getcwd(), "../thrift/services/", "wizecommerce.services.example.thrift")
 
-     def __get_client__(self):
+    def __get_client__(self):
         self.config = Config()
         compiler = None
         for item in self.config.get_thrift_option("compilers"):
@@ -34,7 +35,7 @@ class RubyClientTests(unittest.TestCase):
 
         return RubyClient([], compiler)
 
-     def tearDown(self):
+    def tearDown(self):
         self.config.reset_configuration()
 
 

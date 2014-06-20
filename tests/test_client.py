@@ -48,6 +48,7 @@ class BaseClientTests(unittest2.TestCase):
         client = self.__get_client__()
         self.config.set_local(True)
         self.assertRaisesRegexp(NotImplementedError, ".*Deploy Local Artifact.*", client.deploy_object, self.dict, "dummy")
+        client = self.__get_client__()
         self.config.set_local(False)
         self.assertRaisesRegexp(NotImplementedError, ".*Deploy Production Artifact.*", client.deploy_object, self.dict, "dummy")
 
