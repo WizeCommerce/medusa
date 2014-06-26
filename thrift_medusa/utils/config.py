@@ -12,6 +12,8 @@
  limitations under the License.
 """
 import inspect
+from thrift_medusa.utils.log import Log
+from thrift_medusa.utils.wize_utils import *
 
 import os
 import yaml
@@ -23,7 +25,6 @@ import sys
 class Config():
     """ A python singleton """
     instance = None
-
 
     class __impl:
         """ Implementation of the singleton interface """
@@ -40,7 +41,10 @@ class Config():
                 print "Error: could not load configuration yaml file {config}".format(config=config)
                 sys.exit(1)
             self.config_file = config
-
+            log_dir = os.path.realpath(os.path.join(config, "../../../logs"))
+            wize_mkdir(log_dir)
+            logger = Log(log_file=os.path.join(log_dir, "status.log"), logger_name="definitions").get_logger()
+            self.log = logger.info
 
         @property
         def is_java_source(self):
@@ -174,7 +178,48 @@ class Config():
             except:
                 pass
 
+        @property
+        def is_vcs(self):
+            """
+            Boolean denoting if version control system awareness is enabled.
+            """
+            try:
+                return self.__meta_data__.get("vcs").get("enabled")
+            except:
+                return False
 
+        @is_vcs.setter
+        def is_vcs(self, value):
+            """
+            Boolean denoting if version control system awareness is enabled.
+            """
+            try:
+                self.__meta_data__.get("vcs")["enabled"] = value
+            except:
+                pass
+
+
+        def get_vcs_instance(self):
+            base = "thrift_medusa.vcs."
+            try:
+                if(self.is_vcs):
+                    vcs_dictionary = self.__meta_data__.get("vcs")
+                    vcs_name = vcs_dictionary.get("vcs_class_name")
+                    if vcs_name is None:
+                        raise RuntimeError("Specified classname is not found in configuration")
+                    vcs_config = vcs_dictionary.get(vcs_name) if vcs_name in vcs_dictionary  else {}
+
+                    module_name = base + vcs_name
+                    __import__(module_name)
+                    mod = sys.modules[module_name]
+                    class_ = getattr(mod, vcs_name)
+                    ins = class_(**vcs_config)
+                    return ins
+            except Exception as e:
+                self.is_vcs = False #disabeling vcs.
+                self.log(e.message)
+                raise RuntimeError("Could not create an instance of VCS")
+            return None
 
         @property
         def is_uber(self):
@@ -572,7 +617,7 @@ class Config():
     def __init__(self, config=None):
         project_path = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))), "../../")
         project_path = os.path.realpath(project_path)
-        __config_dir__ =os.path.realpath(os.path.join(project_path, "thrift_medusa/config/"))
+        __config_dir__ = os.path.realpath(os.path.join(project_path, "thrift_medusa/config/"))
 
         if config is None:
             config = os.path.join(__config_dir__, "appConfig.yaml")

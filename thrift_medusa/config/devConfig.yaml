@@ -6,8 +6,10 @@
 thrift:
    ##TODO: Constraints Not yet supported
    constraints:
-     enforce_empty: true   #fails if required empty is set to false.
-     #visibilty_check: true #fails if changing a field from required to anything else
+     #fails if required empty is set to false.
+     enforce_empty: true
+     #fails if changing a field from required to anything else
+     #visibilty_check: true
      #check_field_ordering: true
      #check_version_increment: true
    #these values are default options for all compilers.  They can be overridden on individual entries.
@@ -34,17 +36,23 @@ thrift:
         supported_languages: [java]
         compiler_postfix: _thrift_0.9
         version: 0.9.1
-#      - name:  finagle
-#        bin: /Developer/thrift/bin/thrift
-#        options: ""
-#        supported_languages: [java, ruby]
-#      - name: scrooge
-#        bin:  /dev/null
-#        options: ""
-#        supported_languages: [java]
 
    #constants found inside thrift files.
    thrift: src/main/thrift
+
+vcs:
+  enabled: true
+  #This should be the name of the class implementing your VCS
+  vcs_class_name:  GitVCS
+  # Each VCS implementation can have its own dictionary here.  The configuration key has to match
+  # the name of the class impl.
+  #GitVCS:
+  #  filters:
+  #  branch:
+  #  location:
+  #  remote:
+
+
 
 documentation:
   sandbox: gen-html

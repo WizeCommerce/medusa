@@ -100,8 +100,23 @@ class PublishClient():
             t = ThriftCompiler(item)
             compiler_list.append(t)
 
-        #flatten list
-        thrift_objects = self.service_objects + self.business_objects + self.enum_objects + self.exception_objects
+        #ensure that vcs is enabled, and thrift-file override hasn't been passed in.
+        thrift_objects = []
+        if self.config.is_local() and self.config.get_service_override() is not None:
+            pass
+        elif not self.config.is_vcs or self.config.is_local():
+            #flatten list
+            thrift_objects = self.service_objects + self.business_objects + self.enum_objects + self.exception_objects
+        else:
+            vcs = self.config.get_vcs_instance()
+            file_objects = vcs.get_modified_files()
+            if file_objects is None or len(file_objects) == 0:
+                self.config.is_vcs = False
+                thrift_objects = self.service_objects + self.business_objects + self.enum_objects + self.exception_objects
+            else:
+                self.log.info("Using list of objects from VCS")
+                thrift_objects = map(lambda current_file: os.path.basename(current_file), file_objects)
+                self.log.info("VCS object list is: " + str(thrift_objects))
 
         if self.config.is_local() and self.config.get_service_override() is not None:
             self.service_objects = []
@@ -167,7 +182,7 @@ def main():
     parser.add_argument('--java', action="store_true", dest="java", default=False,
                         help="Enables JavaMode, default is Ruby + Java  (Local Mode Only) ")
     parser.add_argument('--thrift-file', action="store", dest="thrift_file", type=str,
-                        help="Override list of services, and use the one specified (Local Mode Only)")
+                        help="Override list of services, and use the one specified (Local Mode Only)\nThis overrides vcs intelligence")
     parser.add_argument('--config', action="store", dest="config", type=str,
                         help="Override default config file and specify your own yaml config")
     parser.add_argument('--compilers', action="store_true", dest="compilers", default=False,
@@ -184,7 +199,9 @@ def main():
         config = Config(args.config)
 
     config.set_local(args.local)
-    config.set_service_override(args.thrift_file)
+
+    if args.thrift_file is not None:
+        config.set_service_override(os.path.basename(args.thrift_file))
 
     if args.thrift_file is not None:
         config.set_local(True)

@@ -118,23 +118,18 @@ class Client():
             This method builds the client and all dependencies assuming appropriate
             metadata is contained in the thrift file.
         """
-
-        #Always get a full path in case input is a relative path from a script
-        full_path = os.path.abspath(service)
-
         os.chdir(self.sandbox_work)
 
-        dependencies = self.thrift_helper.read_thrift_dependencies(full_path)
+        dependencies = self.thrift_helper.read_thrift_dependencies(service)
 
         #Adding the service file as well to the list.
         if len(dependencies) == 0:
             print "No dependencies for %s" % service
         else:
             for dependency in dependencies:
-                dependency_file = self.thrift_helper.get_thrift_full_path(dependency)
-                self.local_assert(self.__build_dependency__(dependency_file), "Failed to process dependencies for {service}".format(service=dependency_file))
+                self.local_assert(self.__build_dependency__(dependency), "Failed to process dependencies for {service}".format(service=dependency))
 
-        self.local_assert(self.__build_client__(full_path),  "Failed to build Client for {service}".format(service=str(service)))
+        self.local_assert(self.__build_client__(service),  "Failed to build Client for {service}".format(service=str(service)))
         return 0
 
     def local_assert(self, exit_code, message, prefix="ERROR: "):

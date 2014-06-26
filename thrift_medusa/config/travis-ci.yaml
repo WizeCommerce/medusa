@@ -4,8 +4,10 @@
 thrift:
    ##TODO: Constraints Not yet supported
    constraints:
-     enforce_empty: true   #fails if required empty is set to false.
-     #visibilty_check: true #fails if changing a field from required to anything else
+     #fails if required empty is set to false.
+     enforce_empty: true
+     #fails if changing a field from required to anything else
+     #visibilty_check: true
      #check_field_ordering: true
      #check_version_increment: true
    #these values are default options for all compilers.  They can be overridden on individual entries.
@@ -21,29 +23,25 @@ thrift:
       # the version number in the name.  ie.  thrift_0_6_1  or finagle_0.5.0
       # whatever the 'name' is it will be used for the prefix in the artifact
       - name: thrift
-      #bin:  /home/travis/build/WizeCommerce/medusa/thrift_work/thrift-0.9.1/compiler/cpp/thrift
         bin:  /usr/local/bin/thrift
         options: ""
         supported_languages: [java, doc, ruby]
         compiler_postfix: ""
         version: 0.9.1
-      #- name:  thrift_0.9
-      #  bin: /var/lib/jenkins/tools/thrift-0.9.1/thrift
-      #  options: ""
-      #  supported_languages: [java, doc]
-      #  compiler_postfix: _thrift_0.9
-      #  version: 0.9.1
-#      - name:  finagle
-#        bin: /Developer/thrift/bin/thrift
-#        options: ""
-#        supported_languages: [java, ruby]
-#      - name: scrooge
-#        bin:  /dev/null
-#        options: ""
-#        supported_languages: [java]
 
    #constants found inside thrift files.
    thrift: src/main/thrift
+
+vcs:
+  enabled: true
+  #This should be the name of the class implementing your VCS
+  vcs_class_name:  GitVCS
+  # Each VCS implementation can have its own dictionary here.  The configuration key has to match
+  # the name of the class impl.
+  #GitVCS:
+  #  options1: value
+  #  options2: value
+
 
 documentation:
   sandbox: gen-html

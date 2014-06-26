@@ -11,11 +11,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 """
+import unittest2
 from thrift_medusa.utils.config import *
-import unittest
 
 
-class ConfigTests(unittest.TestCase):
+class ConfigTests(unittest2.TestCase):
     def test_object_name(self):
         config1 = Config()
         config2 = Config()
@@ -54,6 +54,21 @@ class ConfigTests(unittest.TestCase):
         config.force_deploy = True
         self.assertTrue(config.force_deploy)
         config.force_deploy = False
+
+    def test_is_vcs(self):
+        config = Config()
+        config.reset_configuration()
+        oldValue = config.is_vcs
+        self.assertTrue(config.is_vcs)
+        config.is_vcs = False
+        self.assertFalse(config.is_vcs)
+        config.force_deploy = oldValue
+
+    def test_get_vcs(self):
+        config = Config()
+        class_name = "GitVCS"
+        ins = config.get_vcs_instance()
+        self.assertEquals(class_name, ins.__class__.__name__)
 
 
     def test_maven_dir(self):
@@ -170,6 +185,6 @@ class ConfigTests(unittest.TestCase):
 
 if __name__ == "__main__":
     # Run unit tests
-    suite = unittest.TestLoader().loadTestsFromTestCase(ConfigTests)
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    suite = unittest2.TestLoader().loadTestsFromTestCase(ConfigTests)
+    unittest2.TextTestRunner(verbosity=2).run(suite)
 
