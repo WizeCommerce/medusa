@@ -4,14 +4,21 @@
 # server though it is deploying everything to localhost and going through the same code path as a production 
 # release.
 thrift:
-   ##TODO: Constraints Not yet supported
+   ##Under Development
    constraints:
+     #enable/disable constraints.  Must be true if any of the options below are to be used.
+     use_constraints: false
+     ####  Options below can be enabled if desired but are considred alpha state #####
      #fails if required empty is set to false.
      enforce_empty: true
      #fails if changing a field from required to anything else
-     #visibilty_check: true
-     #check_field_ordering: true
-     #check_version_increment: true
+     visibilty_check: true
+     #####  Options below have yet to be implemented #####
+     # when enabled, ensures that field ordering is preserved
+     check_field_ordering: false
+     # when enabled ensures that if a file is changed and version is incremented
+     check_version_increment: false
+
    #these values are default options for all compilers.  They can be overridden on individual entries.
    global_compiler_options:
          java: --gen java:private-members,hashcode

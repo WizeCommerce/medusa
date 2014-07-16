@@ -18,9 +18,10 @@ class StatusTests(unittest.TestCase):
     def test_object_name(self):
         status1 = Status()
         status2 = Status()
-        status1.__setattr__("work_dir", "mooooooo")
-        status1.__setattr__("work_dir", "booooo")
-        self.failUnlessEqual(status1.__getattr__("work_dir"), status2.__getattr__("work_dir"))
+        status1.add_artifact("foobar", "0.1.0")
+        status1.add_artifact("moo", "0.2.0")
+        self.failUnless(status2.is_deployed("foobar", "0.1.0"))
+        self.failUnless(status2.is_deployed("moo", "0.2.0"))
 
     def test_is_deployed(self):
         status = Status()
