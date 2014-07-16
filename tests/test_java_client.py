@@ -13,7 +13,6 @@
 """
 import os
 import unittest
-import sys
 from thrift_medusa.clients.java_client import JavaClient
 from thrift_medusa.thrift.thrift_compiler import ThriftCompiler
 from thrift_medusa.utils.config import Config

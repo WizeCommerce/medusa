@@ -27,7 +27,8 @@ class Thrift():
         self.version_pattern = re.compile("const\s+string\s+VERSION\s*=\s*['\"]+(.*)['\"]+")
         self.java_namespace_pattern = re.compile("namespace\s+java\s+(.*)")
         self.ruby_namespace_pattern = re.compile("namespace\s+rb\s+(.*)")
-        self.data_type_pattern = re.compile("\s+(\d+):\s+([required,optional]+)\s+([bool,byte,i16,i32,i64,string,double,string]+)\s+(\w+)")
+        self.data_type_pattern = re.compile(
+            "\s+(\d+):\s+([required,optional]+)\s+([bool,byte,i16,i32,i64,string,double,string]+)\s+(\w+)")
 
         self.config = Config()
         self.log = Log(log_file="status.log", logger_name="status").log
@@ -92,24 +93,32 @@ class Thrift():
         dependencies = self.read_thrift_dependencies_recursively(full_path)
         for item in dependencies:
                 dependency_file = self.get_thrift_full_path(item)
-                cmd = "{thrift_binary} -I {business_objects} -I {exceptions} -I {enums} -I {services} {options} {language_options} -o {destination} {file} ".format(
-                        business_objects=self.config.get_path(type="business_object"), exceptions=self.config.get_path(type="exception_object"),
-                        enums=self.config.get_path(type="enum_object"), services=self.config.get_path(type="service_object"),
-                        thrift_binary=self.compiler.bin, file=dependency_file, options=self.compiler.options,
-                        language_options=self.compiler.language_options("doc"),
-                        destination=sandbox)
+                cmd = "{thrift_binary} -I {business_objects} -I {exceptions} -I {enums} -I {services} {options} " \
+                      "{language_options} -o {destination} {file} ".format(
+                    business_objects=self.config.get_path(type="business_object"),
+                    exceptions=self.config.get_path(type="exception_object"),
+                    enums=self.config.get_path(type="enum_object"),
+                    services=self.config.get_path(type="service_object"),
+                    thrift_binary=self.compiler.bin, file=dependency_file, options=self.compiler.options,
+                    language_options=self.compiler.language_options("doc"),
+                    destination=sandbox)
                 exit_code = subprocess.call(shlex.split(cmd))
                 if not exit_code == 0:
-                    self.log("failed to compile thrift dependency {dependency} for file {file}".format(dependency=dependency_file,file=dependency_file))
+                    self.log("failed to compile thrift dependency {dependency} for file {file}".format(
+                        dependency=dependency_file, file=dependency_file))
                     sys.exit(1)
 
 
         self.log("Generating documentation for %s" % thrift_file)
 
-        cmd = "{thrift_binary} -I {business_objects} -I {exceptions} -I {enums} -I {services} {options} {language_options} -o {destination} {file}".format(
-            business_objects=self.config.get_path(type="business_object"), exceptions=self.config.get_path(type="exception_object"),
-            enums=self.config.get_path(type="enum_object"),  services=self.config.get_path(type="service_object"), thrift_binary=self.compiler.bin,
-            file=thrift_file, options=self.compiler.options, language_options=self.compiler.language_options("doc"), destination=sandbox)
+        cmd = "{thrift_binary} -I {business_objects} -I {exceptions} -I {enums} -I {services} {options} " \
+              "{language_options} -o {destination} {file}".format(
+            business_objects=self.config.get_path(type="business_object"),
+            exceptions=self.config.get_path(type="exception_object"),
+            enums=self.config.get_path(type="enum_object"), services=self.config.get_path(type="service_object"),
+            thrift_binary=self.compiler.bin,
+            file=thrift_file, options=self.compiler.options, language_options=self.compiler.language_options("doc"),
+            destination=sandbox)
 
         exit_code = subprocess.call(shlex.split(cmd))
         if not exit_code == 0:
@@ -129,9 +138,11 @@ class Thrift():
         thrift_file = self.get_thrift_full_path(thrift_file)
         os.system("rm -fr %s" % (self.config.get_ruby_option("sandbox", True)))
         os.system("rm -fr %s" % (os.path.join(self.config.work_dir, "ruby")))
-        cmd = "{thrift_binary} -I {business_objects} -I {exceptions} -I {enums} -I {services} {options} {language_options}   {file}".format(
-            business_objects=self.config.get_path(type="business_object"), exceptions=self.config.get_path(type="exception_object"),
-            enums=self.config.get_path(type="enum_object"), services=self.config.get_path(type="service_object"), thrift_binary=self.compiler.bin,
+        cmd = "{thrift_binary} -I {business_objects} -I {exceptions} -I {enums} -I {services} {options} " \
+              "{language_options}  {file}".format( business_objects=self.config.get_path(type="business_object"),
+            exceptions=self.config.get_path(type="exception_object"),
+            enums=self.config.get_path(type="enum_object"), services=self.config.get_path(type="service_object"),
+            thrift_binary=self.compiler.bin,
             file=thrift_file, options=self.compiler.options, language_options=self.compiler.language_options("ruby"))
         exit_code = subprocess.call(shlex.split(cmd))
         if exit_code != 0:
@@ -139,7 +150,6 @@ class Thrift():
             sys.exit(exit_code)
 
         self.log("Building ruby class for %s" % thrift_file)
-
 
     def is_service(self, thrift_file):
         """
@@ -151,7 +161,6 @@ class Thrift():
             return True
         else:
             return False
-
 
     def thrift_build(self, thrift_file, language="java", sandbox="default"):
         """
@@ -170,7 +179,6 @@ class Thrift():
         if thrift_file.find("/") >= 0:
             return thrift_file
 
-
         if thrift_file.find(self.config.get_global_option("service_prefix")) != -1:
             return os.path.join(self.config.get_path(type="service_object"), thrift_file)
         elif thrift_file.find(self.config.get_global_option("enum_prefix")) != -1:
@@ -180,7 +188,6 @@ class Thrift():
         else:
             return os.path.join(self.config.get_path(type="business_object"), thrift_file)
 
-
     def read_thrift_dependencies_recursively(self, thrift_file):
         dependencies = set(self.read_thrift_dependencies(thrift_file))
         if len(dependencies) is 0:
@@ -189,7 +196,6 @@ class Thrift():
             dependencies = dependencies.union(set(self.read_thrift_dependencies_recursively(item)))
 
         return dependencies
-
 
     ## Under development, not integrated into any clients yet.
     def check_constraints(self, line, thrift_file, diff):
@@ -203,9 +209,10 @@ class Thrift():
                 if line.find("bool") >= 0 or line.find("i64") >= 0 or line.find("i32") >= 0 or \
                     line.find("byte") >= 0 or line.find("double") >= 0 or line.find("string") >= 0:
                         if line.find("optional") == -1 and line.find("required") == -1 and line.find("VERSION") == -1:
-                            self.log("Error: package visibility flag omitted for line: {line} in file: {file}.".format(line=line.replace("\n",""), file=thrift_file))
+                            self.log("Error: package visibility flag omitted for line: {line} in file: {file}."
+                                     .format(line=line.replace("\n", ""), file=thrift_file))
                             sys.exit(1)
-            ## Needs git support.
+            ## Needs VCS support.
             if self.config.get_thrift_constraint("check_field_ordering"):
                 pass
             if self.config.get_thrift_constraint("check_version_increment"):
@@ -258,11 +265,7 @@ class Thrift():
                 type['name'] = match.group(4)
                 thrift_meta[match.group(1)] = type
 
-
         return thrift_meta
-
-
-
 
     def read_thrift_dependencies(self, thrift_file):
         """
