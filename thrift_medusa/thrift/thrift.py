@@ -16,6 +16,7 @@ import subprocess
 from thrift_medusa.utils.log import Log
 from thrift_medusa.utils.config import Config
 from thrift_medusa.utils.wize_utils import *
+from thrift_medusa.exceptions.constraint_exception import ConstraintException
 import shlex
 import re
 import sys
@@ -162,6 +163,18 @@ class Thrift():
         else:
             return False
 
+
+    def is_business_object(self, thrift_file):
+        """
+         boolean check on thrift file whether true if it contains the object_prefix in the file name.
+
+         Usually it's 'bizobj' or whatever you overrode the value with in the config file.
+        """
+        if thrift_file.find(self.config.get_global_option("object_prefix")) != -1:
+            return True
+        else:
+            return False
+
     def thrift_build(self, thrift_file, language="java", sandbox="default"):
         """
             compiles a single thrift file and copies content to
@@ -197,33 +210,56 @@ class Thrift():
 
         return dependencies
 
-    ## Under development, not integrated into any clients yet.
-    def check_constraints(self, line, thrift_file, diff):
-        if self.config.get_thrift_constraint("constraints_enabled"):
-            if self.config.get_thrift_constraint("enforce_empty"):
-                match = re.search("bool.*empty", line)
-                if match is not None and line.find("required") == -1:
-                    self.log("Error: bool empty field must be a required field. Missing in file {file}".format(file=thrift_file))
-                    sys.exit(1)
-            if self.config.get_thrift_constraint("visibility_check"):
-                if line.find("bool") >= 0 or line.find("i64") >= 0 or line.find("i32") >= 0 or \
-                    line.find("byte") >= 0 or line.find("double") >= 0 or line.find("string") >= 0:
-                        if line.find("optional") == -1 and line.find("required") == -1 and line.find("VERSION") == -1:
-                            self.log("Error: package visibility flag omitted for line: {line} in file: {file}."
-                                     .format(line=line.replace("\n", ""), file=thrift_file))
-                            sys.exit(1)
-            ## Needs VCS support.
-            if self.config.get_thrift_constraint("check_field_ordering"):
-                pass
-            if self.config.get_thrift_constraint("check_version_increment"):
-                if diff is not None and diff != "" and diff.find("VERSION") == -1:
-                    self.log("Error, You forgot to increment the version for {file}".format(file=thrift_file))
-                    sys.exit(1)
+    def check_itemized_contraints(self, line, thrift_file):
+        """
+        If enabled via the yaml configuration.  This method will ensure that certain contraints are enforced.
 
+        These constraints are applicable on individual lines items and do not need full context of the file.
 
-                pass
-        else:
+        If any of them fail, it will throw a ConstraintException
+        """
+        if not self.config.constraints_enabled:
+            return
+
+        if self.config.visibility_check_enabled:
+            if line.find("bool") >= 0 or line.find("i64") >= 0 or line.find("i32") >= 0 or \
+                line.find("byte") >= 0 or line.find("double") >= 0 or line.find("string") >= 0:
+                    if line.find("optional") == -1 and line.find("required") == -1 and line.find("VERSION") == -1:
+                        self.log("Error: package visibility flag omitted for line: {line} in file: {file}."
+                                 .format(line=line.replace("\n", ""), file=thrift_file))
+                        raise ConstraintException("visibility flag is missing.  Please use 'optional' or 'required' "
+                                                  "to set visibility.  Please check log file for more details.")
+
+    def check_constraints(self, thrift_file, diff, raw_data):
+        """
+        If enabled via the yaml configuration.  This method will ensure that certain contraints are enforced.
+
+        If any of them fail, it will throw a ConstraintException
+        """
+        if not self.config.constraints_enabled:
+            return
+
+        if self.config.empty_constraint_enabled and self.is_business_object(thrift_file):
+            match = re.search("bool.*empty", raw_data)
+            if match is not None and raw_data.find("required") == -1:
+                self.log("Error: bool empty field must be a required field. Missing in file {file}".format(
+                    file=thrift_file))
+                raise ConstraintException("empty flag is required.  Please ensure to include a boolean empty field "
+                                              "in your struct")
+
+        #Everything below this line in under Development.
+        ## Needs further development and interaction with VCS module
+        if self.config.check_field_ordering_enabled:
+            ### pseudologic:  get current thrift file, call a helper method which will extract the field Ids, names,
+            ### and other metrics.  retrieve previous version of file and do the same operation, compare resulting
+            ### constructs.  If thrift patterns are broke.  ie.  field ordering is changed, required is removed and such.
+            ### throw an exception.
             pass
+        if self.config.check_version_increment_enabled:
+            ## pseudologic:  check thrift_file via VCS.  If file is changed, ensure that VERSION number has changed.
+            if diff is not None and diff != "" and diff.find("VERSION") == -1:
+                self.log("Error, You forgot to increment the version for {file}".format(file=thrift_file))
+                raise ConstraintException("a file change requires a version increment.")
 
 
     ## Under development, not integrated into any clients yet.
@@ -259,11 +295,11 @@ class Thrift():
                 if match.lastindex != 4:
                     self.log("Error: found a discrepancy when parsing {file}".format(thrift_file=file))
                     sys.exit(1)
-                type = {}
-                type['visibility'] = match.group(2)
-                type['type'] = match.group(3)
-                type['name'] = match.group(4)
-                thrift_meta[match.group(1)] = type
+                constraint_type = {}
+                constraint_type['visibility'] = match.group(2)
+                constraint_type['type'] = match.group(3)
+                constraint_type['name'] = match.group(4)
+                thrift_meta[match.group(1)] = constraint_type
 
         return thrift_meta
 
@@ -279,6 +315,9 @@ class Thrift():
         self.check_file(thrift_file)
         fp = open(thrift_file, 'r')
         data = fp.readlines()
+        raw_data = "".join(data)
+        self.check_constraints(thrift_file, None, raw_data)
+
         fp.close()
         includes = []
         object_count = 0
@@ -286,6 +325,8 @@ class Thrift():
             #skip comments
             if line.startswith("#"):
                 continue
+            if not self.is_service(thrift_file):
+                self.check_itemized_contraints(line, thrift_file)
             if line.startswith("enum"):
                 is_enum = True
             if line.startswith("exception"):

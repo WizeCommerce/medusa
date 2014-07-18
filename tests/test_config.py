@@ -20,8 +20,6 @@ class ConfigTests(unittest2.TestCase):
         config1 = Config()
         config2 = Config()
         original = config1.work_dir
-        config1.__setattr__("work_dir", "/tmp/value1")
-        config1.__setattr__("work_dir", "/tmp/value2")
         self.failUnlessEqual(config1.work_dir, config2.work_dir)
         #reset value
         config1.work_dir = original
@@ -182,6 +180,75 @@ class ConfigTests(unittest2.TestCase):
         expected = "-shaded"
         result = config.get_java_option("uber_jar_postfix")
         self.failUnlessEqual(expected, result)
+
+    #Begin Constraint tests
+    def test_constraints_enabled(self):
+        config = Config()
+        expected = False
+        result = config.constraints_enabled
+        self.failUnlessEqual(expected, result)
+        expected = True
+        config.constraints_enabled = expected
+        result = config.constraints_enabled
+        self.failUnlessEqual(expected, result)
+
+    def test_empty_constraint_enabled(self):
+        config = Config()
+        expected = True
+        result = config.empty_constraint_enabled
+        self.failUnlessEqual(expected, result)
+        expected = False
+        config.empty_constraint_enabled = expected
+        result = config.empty_constraint_enabled
+        self.failUnlessEqual(expected, result)
+
+    def test_visibility_check_enabled_(self):
+        config = Config()
+        expected = True
+        result = config.visibility_check_enabled
+        self.failUnlessEqual(expected, result)
+        expected = False
+        config.visibility_check_enabled = expected
+        result = config.visibility_check_enabled
+        self.failUnlessEqual(expected, result)
+
+    def test_check_field_ordering_enabled(self):
+        config = Config()
+        expected = False
+        result = config.check_field_ordering_enabled
+        self.failUnlessEqual(expected, result)
+        expected = True
+        config.check_field_ordering_enabled = expected
+        result = config.check_field_ordering_enabled
+        self.failUnlessEqual(expected, result)
+
+    def test_check_version_increment_enabled(self):
+        config = Config()
+        expected = False
+        result = config.check_version_increment_enabled
+        self.failUnlessEqual(expected, result)
+        expected = True
+        config.check_version_increment_enabled = expected
+        result = config.check_version_increment_enabled
+        self.failUnlessEqual(expected, result)
+
+    def test_get_thrift_constraint(self):
+        config = Config()
+        expected = False
+        result = config.get_thrift_constraint("use_constraints")
+        self.failUnlessEqual(expected, result)
+        expected = True
+        result = config.get_thrift_constraint("enforce_empty")
+        self.failUnlessEqual(expected, result)
+        result = config.get_thrift_constraint("visibilty_check")
+        self.failUnlessEqual(expected, result)
+        expected = False
+        result = config.get_thrift_constraint("check_field_ordering")
+        self.failUnlessEqual(expected, result)
+        result = config.get_thrift_constraint("check_version_increment")
+        self.failUnlessEqual(expected, result)
+
+    #end Constraint Tests
 
 if __name__ == "__main__":
     # Run unit tests
