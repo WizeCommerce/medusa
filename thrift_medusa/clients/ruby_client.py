@@ -96,7 +96,7 @@ class RubyClient(Client):
         """
             Implement a method responsible for deploying your artifact to your production server.
         """
-        if self.status.is_deployed(properties.get("ARTIFACTID"), properties.get("VERSION"), "ruby"):
+        if self.status.is_deployed(properties.get("ARTIFACTID"), properties.get("VERSION"), "ruby", self.compiler.name):
             return 0
 
         self.__deploy_local_artifact__(properties, thrift_object, postfix)
@@ -214,7 +214,7 @@ class RubyClient(Client):
         properties["THRIFT"] = thrift_object
 
         #ensures that this particular gems hasn't already been built.
-        if self.status.is_deployed(properties.get("ARTIFACTID"), properties.get("VERSION"), "ruby"):
+        if self.status.is_deployed(properties.get("ARTIFACTID"), properties.get("VERSION"), "ruby", self.compiler.name):
             self.log(
                 "%s-%s has already been built, skipping" % (
                     properties.get("ARTIFACTID"), properties.get("VERSION")))
@@ -252,7 +252,8 @@ class RubyClient(Client):
 
         os.system("cp -v *.gem %s" % self.sandbox)
 
-        self.status.add_artifact(version=properties.get("VERSION"), artifact=properties.get("ARTIFACTID"), lang="ruby")
+        self.status.add_artifact(version=properties.get("VERSION"), artifact=properties.get("ARTIFACTID"), lang="ruby",
+                                 compiler=self.compiler.name)
         os.chdir(self.config.work_dir)
         ##TODO: insert deploying of 'snapshot' versions here once a feature request for a dev version is requested.
 

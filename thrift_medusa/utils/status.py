@@ -29,18 +29,18 @@ class Status:
     __deployed__ = {}
 
     @staticmethod
-    def __build_key__(artifact, version, lang="java"):
-        return artifact + "-" + version + "-" + lang
+    def __build_key__(artifact, version, lang="java", compiler="thrift"):
+        return artifact + "-" + version + "-" + lang + "-" + compiler
 
-    def is_deployed(self, artifact, version, lang="java"):
+    def is_deployed(self, artifact, version, lang="java", compiler="thrift"):
         """
             expected format of "artifact" is artifact-version
         """
-        id = self.__build_key__(artifact, version, lang)
+        id = self.__build_key__(artifact, version, lang, compiler)
         return self.__deployed__.has_key(id)
 
-    def add_artifact(self, artifact, version, lang="java"):
-        id = self.__build_key__(artifact, version, lang)
+    def add_artifact(self, artifact, version, lang="java", compiler="thrift"):
+        id = self.__build_key__(artifact, version, lang, compiler)
         self.__deployed__[id] = id
 
     def __init__(self):
