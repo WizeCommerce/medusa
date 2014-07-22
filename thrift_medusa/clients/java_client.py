@@ -130,7 +130,8 @@ class JavaClient(Client):
         properties["VERSION"] = increment_version(properties.get("VERSION")) + "-SNAPSHOT"
 
         #Ensure artifact has not already been built.
-        if self.status.is_deployed(properties.get("ARTIFACTID"), properties.get("VERSION")):
+        if self.status.is_deployed(properties.get("ARTIFACTID"), properties.get("VERSION"),
+                                   "java", self.compiler.name):
             self.log(
                 "%s-%s has already been deployed, skipping" % (
                     properties.get("ARTIFACTID"), properties.get("VERSION")))
@@ -157,7 +158,8 @@ class JavaClient(Client):
             if exit_code is not 0:
                 sys.exit(exit_code)
             else:
-                self.status.add_artifact(properties.get("ARTIFACTID"), properties.get("VERSION"))
+                self.status.add_artifact(properties.get("ARTIFACTID"), properties.get("VERSION"),
+                                         "java", self.compiler.name)
             os.system("cp target/*.jar %s" % self.sandbox)
             os.system("cp pom.xml %s/%s%s.xml" % (self.sandbox, properties.get("ARTIFACTID"), postfix))
         return 0
@@ -185,7 +187,8 @@ class JavaClient(Client):
             self.log("%s is okay, proceeding building and deploying version:%s" % (
                 properties.get("ARTIFACTID"), properties.get("VERSION")))
 
-            if self.status.is_deployed(properties.get("ARTIFACTID"), properties.get("VERSION")):
+            if self.status.is_deployed(properties.get("ARTIFACTID"), properties.get("VERSION"),
+                                       "java", self.compiler.name):
                 self.log("%s-%s has already been deployed, skipping" % (
                     properties.get("ARTIFACTID"), properties.get("VERSION")))
             else:
@@ -205,7 +208,8 @@ class JavaClient(Client):
                 ###Normal Deploy
                 exit_code = subprocess.call(shlex.split(self.config.maven_deploy_command))
                 self.local_assert(exit_code, "Failed to build %s" % properties.get("ARTIFACTID"))
-                self.status.add_artifact(properties.get("ARTIFACTID"), properties.get("VERSION"))
+                self.status.add_artifact(properties.get("ARTIFACTID"), properties.get("VERSION"),
+                                         "java", self.compiler.name)
 
         ##Deploy shaded artifact.
         # This is a secondary check that allows for uber jars to be deployed irrelevant of the status of the normal releases.
