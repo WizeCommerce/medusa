@@ -126,7 +126,7 @@ class GitVCS(VersionControlSystem):
             returns a list of all hashes (ie commits) between the two tags passed into the method.
 
             If current_commit or previous_commit is empty, will fall back on default behavior and return
-            list of modified files for and its parent commit.
+            a list of modified files between the latest commit (HEAD) and its parent(s).
         """
         if current_commit is None or previous_commit is None:
             diff_set = []
