@@ -23,7 +23,6 @@ class GitVCS(VersionControlSystem):
         VersionControlSystem.__init__(self, **kwargs)
         git_repo_location = kwargs.get('repo_location')
         self.head = None
-        self.prev = None
         self.commits = None
         if git_repo_location is None:
             project_path = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))),
@@ -105,8 +104,6 @@ class GitVCS(VersionControlSystem):
                 return None
             if commits_len >= 1:
                 self.head = commits[0]
-            if commits_len >= 2:
-                self.prev = commits[1]
 
         return self.head
 
@@ -129,10 +126,15 @@ class GitVCS(VersionControlSystem):
             returns a list of all hashes (ie commits) between the two tags passed into the method.
 
             If current_commit or previous_commit is empty, will fall back on default behavior and return
-            list of modified files for latest commit.
+            a list of modified files between the latest commit (HEAD) and its parent(s).
         """
         if current_commit is None or previous_commit is None:
-            diff_set = self.head.diff(self.prev.hexsha)
+            diff_set = []
+            for p in self.head.parents:
+                diff = self.head.diff(p)
+                for c in diff:
+                    if c is not None:
+                        diff_set.append(c)
         else:
             if type(current_commit) == str:
                 current_commit = self.head if current_commit == "HEAD" else self.find_commit(current_commit)[0]
